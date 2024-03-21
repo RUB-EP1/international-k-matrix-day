@@ -23,8 +23,9 @@ begin
 		Pkg.PackageSpec("Plots"),
 		Pkg.PackageSpec("PlutoUI"),
 		Pkg.PackageSpec("Parameters"),
+		Pkg.PackageSpec("PlutoTeachingTools"),
 		Pkg.PackageSpec("LaTeXStrings"),
-		Pkg.PackageSpec("LinearAlgebra")	
+		Pkg.PackageSpec("LinearAlgebra")
 		])
 	# 
 	using StaticArrays
@@ -33,6 +34,7 @@ begin
 	using PlutoUI
 	using Parameters
 	using LinearAlgebra
+	using PlutoTeachingTools
 end
 
 # ╔═╡ 9ade0bbc-0b04-4e6d-92cf-54062b638cfe
@@ -65,6 +67,17 @@ The first example delves into the relationship between the K-matrix and the mult
 md"""
 ### Setup
 
+$T = \begin{pmatrix}
+T_{1\to1} & T_{1\to2} & T_{1\to3}\\
+T_{2\to1} & T_{2\to2} & T_{2\to3}\\
+T_{3\to1} & T_{3\to2} & T_{3\to3}\\
+\end{pmatrix}$
+
+where the index 1,2, and 3 label a channel of two particles, A+B, C+D, E+F, respectively.
+
+
+The K mattrix
+
 $K = \frac{1}{m_0^2-s}
 \begin{pmatrix}
 g_1^2 & g_1 g_2 & g_1 g_3\\
@@ -73,13 +86,19 @@ g_3 g_1 & g_3 g_2 & g_3^2\\
 \end{pmatrix}$
 
 Use in the expression
-$T = [1 -i  K \rho]^{-1} K$ 
+$T = [1 -i  K \rho]^{-1} K$, 
+where 1 is identity matrix of three dims.,
 
 with $\rho$ being a diagonal matrix of phase space factors, $\rho=\text{Diag}(\rho_1,\rho_2,\rho_3)$.
 
 Do the calculations and find simple answer
 
 $T = \frac{g_i g_j}{m_0^2-s-ig_1^2 \rho_1-ig_2^2 \rho_2-ig_3^2 \rho_3}$
+
+Let's compare to the BW parametrization
+
+$\text{BW} = \frac{m_0\Gamma_0}{m_0^2-s-im_0 \Gamma_0}$
+
 """
 
 # ╔═╡ 3fde6651-a704-4757-b282-3a7cfcd36f6e
@@ -88,6 +107,18 @@ Let's setup couplings for three channels, that we can adjust:
 - g₁ = $(@bind g1_T1 Slider(range(0,2,51), default=1.2, show_value=true)) GeV for the first channel,
 - g₂ = $(@bind g2_T1 Slider(range(0,2,51), default=0.5, show_value=true)) GeV for the second channel, and 
 - g₃ = $(@bind g3_T1 Slider(range(0,2,51), default=1.6, show_value=true)) GeV for the third channel.
+"""
+
+# ╔═╡ fe35af83-4910-48e4-b9de-5b8a1f85fb72
+md"""
+what we plot is a cross section calculated as 
+
+$\frac{\mathrm{d}\sigma}{\mathrm{d}m} = \frac{1}{J_i} |T_{ij}|^2 \frac{\mathrm{d}\Phi_j}{\mathrm{d}m}$
+
+with
+- the flux $J_i$ set to 1, and
+- the $\mathrm{d}\Phi_j / \mathrm{d}m = 2m\rho_j$, and
+- the $\rho_j$ is zero below the threshold of the j channel.
 """
 
 # ╔═╡ ad74e82b-b2f4-4b8d-99ea-2fe295bb018d
@@ -126,6 +157,19 @@ h_2 h_1 & h_2^2
 \end{pmatrix}$
 
 
+we start with
+
+$K \approx
+\begin{pmatrix}
+\frac{g_1^2}{m_{(1)}^2-s} & 0\\
+0 & \frac{h_2^2}{m_{(2)}^2-s}
+\end{pmatrix}$
+
+since $g_2$ and $h_1$ are small
+
+In that case, the T is simply ...
+
+
 """
 
 # ╔═╡ 729c86ab-cf81-48bf-82be-b89cf28eaee6
@@ -133,6 +177,13 @@ md"""
 Non-diagonal couplings make the system coupled. The channels start talking to each other.
 - g₂ = $(@bind g2_T2 Slider(range(-1,2,61), default=0.1, show_value=true)) GeV for the first channel,
 - h₁ = $(@bind h1_T2 Slider(range(-1,2,61), default=0.1, show_value=true)) GeV for the second channel, and 
+"""
+
+# ╔═╡ a7a68629-bf6f-435e-9a97-de9a02a31160
+md"""
+Let's find the first expansion term to reflect on how a weakly coupled resonances show up in the second channel.
+
+$T_{22} = \frac{h_2^2}{m_{(2)}^2 - s - ih_2^2\rho_2} + \epsilon X$
 """
 
 # ╔═╡ 0e899f67-adec-4837-9993-c9fe22f788d1
@@ -152,6 +203,10 @@ md"""
 
 $K = \frac{g^2}{m_{(1)}^2-s}+
 \frac{h^2}{m_{(2)}^2-s}$
+
+$T = [1-iK\rho ]^{-1} K$
+
+If K is zero for $s=s_\text{z}$, T is zero.
 """
 
 # ╔═╡ 91db142a-109f-414a-8d2c-9d3cd92bae40
@@ -315,15 +370,17 @@ end;
 
 # ╔═╡ fbfc0e6c-775e-4025-ad06-e3f6e291ec52
 let
-	plot(title=["Scattering amplitude" ""], yaxis=nothing,
+	plot(title=["Scattering cross section" ""], yaxis=nothing,
 		layout=grid(2,1, heights=(0.5,0.5)), size=(700,500))
 	plot!(2.6, 8, sp=1, lab="Tₖ[1,1]") do e
 		A = amplitude(T2, e)[1,1]
-		abs2(A) * e
+		phsp = 1.0 # as before
+		abs2(A) * phsp * e
 	end
 	plot!(2.6, 8, sp=2, lab="Tₖ[2,2]") do e
 		A = amplitude(T2, e)[2,2]
-		abs2(A) * e
+		phsp = 1.0 # as before
+		abs2(A) * phsp * e
 	end
 	vline!(sp=1, [T2.K.poles[1].M])
 	vline!(sp=2, [T2.K.poles[2].M])
@@ -348,10 +405,11 @@ A_E3 = ProductionAmplitude(T3, SVector{2}(α1_E3, α2_E3*cis(ϕ2_E3)), SVector{1
 
 # ╔═╡ 7b4fa73c-1075-4271-8d2f-1668d98904ab
 let
-	plot(title="Scattering amplitude", yaxis=nothing)
+	plot(title="Scattering cross section", yaxis=nothing)
 	plot!(2.6, 8, lab="Tₖ") do e
 		A = amplitude(T3, e)[1,1]
-		abs2(A) * e
+		phsp = 1
+		abs2(A) * phsp * e
 	end
 	vline!([T3.K.poles[1].M, T3.K.poles[2].M])
 end
@@ -374,18 +432,25 @@ const iϵ = 1e-7im
 # ╔═╡ 3e76dfec-e83c-46df-8838-b299a7aaa5e3
 let
 	m0 = T1.K.poles[1].M
-	plot(title="Scattering amplitude", yaxis=nothing)
+	plot(title="Scattering cross section 1 → 1", yaxis=nothing)
+	# K-matrix
 	plot!(2.6, 8, lab="Tₖ[1,1]") do e
 		A = amplitude(T1, e)[1,1]
-		abs2(A) * e
+		phsp = real(ρ(T1.channels[1], e)) * e
+		abs2(A) * phsp
 	end
 	vline!([m0])
+	# BW
 	N_peak = abs2(amplitude(T1, m0+iϵ)[1,1])
 	plot!(2.6, 8, lab="BW₀") do e
 		Γ0=sum(Γv_T1)
 		A = m0*Γ0/(m0^2-e^2-1im*m0*Γ0)
-		N_peak * abs2(A) * e
+		phsp = real(ρ(T1.channels[1], e)) * e
+		N_peak * abs2(A) * phsp
 	end
+	vline!(map(T1.channels) do ch
+		real(ch.m1+ch.m2)
+	end, lab="thresholds", ls=:dash)
 end
 
 # ╔═╡ 35b9a451-5fac-46e2-97bb-ebc19d4b3418
@@ -402,12 +467,14 @@ let
 	plot()
 	plot!(2.6, 8, sp=1, lab="Total production", yaxis=nothing) do e
 		A = amplitude(A_E3, e)[1]
-		abs2(A) * e
+		phsp = 1 # to the corrected
+		abs2(A) * e * phsp
 	end
 	map([1,2]) do ind
 		plot!(2.6, 8, sp=1, fill=0, alpha=0.2, lab="from R$(ind)") do e
 			A = productionpole(A_E3, e, ind)[1]
-			abs2(A) * e
+			phsp = 1 # to the corrected
+			abs2(A) * phsp * e
 		end
 	end
 	vline!([T3.K.poles[1].M, T3.K.poles[2].M])
@@ -429,6 +496,7 @@ end
 # ╟─798f53e9-d871-42d1-a81c-d35adc7ece21
 # ╟─3fde6651-a704-4757-b282-3a7cfcd36f6e
 # ╠═0ff7e560-37ca-4016-bc01-741322402679
+# ╟─fe35af83-4910-48e4-b9de-5b8a1f85fb72
 # ╠═3e76dfec-e83c-46df-8838-b299a7aaa5e3
 # ╟─ad74e82b-b2f4-4b8d-99ea-2fe295bb018d
 # ╟─ce2c280e-6a55-4766-a0f9-941b448c41c9
@@ -436,6 +504,7 @@ end
 # ╠═a6fd628c-86db-4d3f-836b-ff376cac7f1d
 # ╟─1663348b-ed67-4851-9365-9641e6379fcd
 # ╟─729c86ab-cf81-48bf-82be-b89cf28eaee6
+# ╟─a7a68629-bf6f-435e-9a97-de9a02a31160
 # ╠═fbfc0e6c-775e-4025-ad06-e3f6e291ec52
 # ╟─0e899f67-adec-4837-9993-c9fe22f788d1
 # ╟─27f0ae17-b61c-49c5-b4fc-6de5d2ddda94
