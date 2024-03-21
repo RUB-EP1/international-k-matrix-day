@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "eamodio.gitlens",
+        "juliacomputing.pluto-vscode",
+        "julialang.language-julia",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one",
+    ]
+}
