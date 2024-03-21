@@ -51,9 +51,6 @@ To get started with the materials in this repository:
 2. **Install Dependencies**: Ensure that you have Python installed along with Jupyter Notebook or JupyterLab. Install any required Python packages using `pip install -r requirements.txt`.
 3. **Explore the Notebooks**: Open the practical examples notebook in Jupyter to begin interacting with the examples.
 
-
-By following these instructions, users will be able to set up their environment to interact with the Pluto notebooks provided in the course materials.
-
 ## Contributing
 
 We welcome contributions and suggestions to improve the educational materials. Please feel free to open an issue or submit a pull request with your enhancements.
