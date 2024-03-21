@@ -52,4 +52,6 @@ We welcome contributions and suggestions to improve the educational materials. P
 
 ## License
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 This educational material is provided under MIT licence, free to reuse and distribute.
