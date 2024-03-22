@@ -10,6 +10,8 @@ environments:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/juliaup-1.13.0-he8a937b_0.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libgcc-ng-13.2.0-h807b86a_5.conda
       - conda: https://conda.anaconda.org/conda-forge/linux-64/libgomp-13.2.0-h807b86a_5.conda
+      osx-64:
+      - conda: https://conda.anaconda.org/conda-forge/osx-64/juliaup-1.13.0-hf4330d5_0.conda
       win-64:
       - conda: https://conda.anaconda.org/conda-forge/win-64/juliaup-1.13.0-h975169c_0.conda
       - conda: https://conda.anaconda.org/conda-forge/win-64/ucrt-10.0.22621.0-h57928b3_0.tar.bz2
@@ -75,6 +77,22 @@ packages:
   license_family: MIT
   size: 3859930
   timestamp: 1706564340550
+- kind: conda
+  name: juliaup
+  version: 1.13.0
+  build: hf4330d5_0
+  subdir: osx-64
+  url: https://conda.anaconda.org/conda-forge/osx-64/juliaup-1.13.0-hf4330d5_0.conda
+  sha256: 81b1271be7f7c22b47d8b3dbfc959434087be1ff357cd4c9bf4a0bbf90fa60e1
+  md5: 1bc86f6ebb96981962e52b6d42a09616
+  depends:
+  - __osx >=10.15
+  constrains:
+  - __osx >=10.12
+  license: MIT
+  license_family: MIT
+  size: 2183774
+  timestamp: 1706564964770
 - kind: conda
   name: libgcc-ng
   version: 13.2.0
