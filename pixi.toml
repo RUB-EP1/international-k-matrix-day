@@ -13,6 +13,9 @@ juliaup = ">=1.13.0"
 build = { cmd = "julia --project -e 'using Pkg; Pkg.instantiate()'", depends_on = [
     "install-julia",
 ] }
+doc = { cmd = "julia --project -e 'using PlutoSliderServer; PlutoSliderServer.export_directory(Export_output_dir=\"_build\")'", depends_on = [
+    "build",
+] }
 install-julia = "juliaup add 1.10.2 && juliaup default 1.10.2"
 pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"K-matrix.jl\")'", depends_on = [
     "build",
