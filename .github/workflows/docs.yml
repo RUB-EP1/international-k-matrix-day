@@ -19,6 +19,9 @@ permissions:
 
 jobs:
   build:
+    env:
+      FORCE_COLOR: yes
+      PIXI_COLOR: always
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
