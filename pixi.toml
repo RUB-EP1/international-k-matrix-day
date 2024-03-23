@@ -15,10 +15,10 @@ build = { cmd = "julia --project -e 'using Pkg; Pkg.instantiate()'", depends_on 
     "install-julia",
 ] }
 install-julia = "juliaup add 1.10.2 && juliaup default 1.10.2"
-pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"K-matrix.jl\")'", depends_on = [
+pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"docs/K-matrix.jl\")'", depends_on = [
     "build",
 ] }
-lab = "jupyter lab"
+lab = "jupyter lab docs"
 
 [pypi-dependencies]
 jupyterlab = "*"
