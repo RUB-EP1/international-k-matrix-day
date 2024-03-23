@@ -21,6 +21,7 @@ plotly = "==5.18"
 python = "==3.10"
 python-lsp-server = ">=1.10.1,<1.11"
 sympy = "==1.12"
+taplo = ">=0.9.1,<0.10"
 
 [tasks.build]
 cmd = "julia --project -e 'using Pkg; Pkg.instantiate()'"
@@ -45,7 +46,10 @@ cmd = """
 cmd = "jupyter lab docs"
 
 [tasks.lint]
-cmd = "nbstripout docs/*.ipynb"
+cmd = """
+    nbstripout docs/*.ipynb && \
+    taplo format
+"""
 
 [tasks.pluto]
 cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"docs/K-matrix.jl\")'"
