@@ -21,7 +21,14 @@ pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"docs/K-ma
 lab = "jupyter lab docs"
 
 [pypi-dependencies]
+ampform = { version = "==0.15" }
+ipympl = "*"
+ipywidgets = "*"
 jupyterlab = "*"
 jupyterlab-git = "*"
 jupyterlab-lsp = "*"
+jupyterlab-myst = "*"
+matplotlib = "*"
+plotly = { version = "==5.18" }
 python-lsp-server = "*"
+sympy = { version = "==1.12" }
