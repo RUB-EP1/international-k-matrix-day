@@ -8,9 +8,6 @@
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[toml]": {
-    "editor.formatOnSave": false
-  },
   "[yaml]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
