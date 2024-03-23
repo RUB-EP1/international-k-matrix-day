@@ -19,6 +19,7 @@ pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"docs/K-ma
     "build",
 ] }
 lab = "jupyter lab docs"
+lint = "nbstripout docs/*.ipynb"
 
 [pypi-dependencies]
 ampform = { version = "==0.15" }
@@ -32,3 +33,4 @@ matplotlib = "*"
 plotly = { version = "==5.18" }
 python-lsp-server = "*"
 sympy = { version = "==1.12" }
+nbstripout = "*"
