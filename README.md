@@ -34,8 +34,8 @@ This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Ju
    pixi run pluto
    ```
 
-   > [!WARNING]
-   > The first time you run this command, it can take a few minutes before all Julia packages are downloaded and installed.
+> [!WARNING]
+> The first time you run this command, it can take a few minutes before all Julia packages are downloaded and installed.
 
 ## Contributing
 
