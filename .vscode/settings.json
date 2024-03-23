@@ -15,5 +15,5 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.formatOnSave": true,
-  "livePreview.defaultPreviewPath": "_build"
+  "livePreview.defaultPreviewPath": "docs/_build"
 }
