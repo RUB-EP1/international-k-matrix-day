@@ -21,30 +21,16 @@ To get started with the materials in this repository, clone the repository using
 git clone https://github.com/mmikhasenko/international-k-matrix-day
 ```
 
-This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Julia](https://julialang.org/). Below are the steps to set up your environment for running the provided materials.
+This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Julia](https://julialang.org/). You can install and run Pluto and Julia yourself, but you can also use the provided [Pixi](https://pixi.sh) environment.
 
-### Installing Julia
-
-1. **Download Julia**: Visit the [official Julia language website](https://julialang.org/downloads/) and download the appropriate installer for your operating system.
-2. **Install Julia**: Run the installer and follow the on-screen instructions to install Julia on your system.
-
-### Setting up Pluto.jl
-
-After installing Julia, the next step is to set up Pluto.jl, which is the environment used for interactive notebooks in this course.
-
-1. **Open Julia**: Launch the Julia application. You will be greeted with the Julia REPL, a command-line interface for Julia.
-2. **Install Pluto.jl**: In the Julia REPL, install the Pluto.jl package by running the following command:
-   ```julia
-   using Pkg
-   Pkg.add("Pluto")
-   ```
-3. **Launch Pluto**: After the installation is complete, start Pluto by running:
-   ```julia
-   using Pluto
-   Pluto.run()
+1. [Install Pixi](https://pixi.sh/latest/#installation)
+2. Run the Pixi `pluto` task:
+   ```shell
+   pixi run pluto
    ```
 
-Pluto will now start, and your default web browser should open a new tab pointing to Pluto's start page. From here, you can create new notebooks or open existing ones.
+> [!WARNING]
+> The first time you run this command, it can take a few minutes before all Julia packages are downloaded and installed.
 
 ## Contributing
 

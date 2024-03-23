@@ -1,0 +1,19 @@
+[project]
+name = "international-k-matrix-day"
+version = "0.1.0"
+description = "Educational materials for the K-matrix formalism in the field of hadron physics"
+authors = ["Misha Mikhasenko <mikhail.mikhasenko@gmail.com>"]
+channels = ["conda-forge"]
+platforms = ["linux-64", "osx-64", "win-64"]
+
+[dependencies]
+juliaup = ">=1.13.0"
+
+[tasks]
+build = { cmd = "julia --project -e 'using Pkg; Pkg.instantiate()'", depends_on = [
+    "install-julia",
+] }
+install-julia = "juliaup add 1.10.2 && juliaup default 1.10.2"
+pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"K-matrix.jl\")'", depends_on = [
+    "build",
+] }
