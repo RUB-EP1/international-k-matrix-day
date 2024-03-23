@@ -1,1 +1,4 @@
+.ipynb_checkpoints/
 .pixi/
+.virtual_documents/
+_build/
