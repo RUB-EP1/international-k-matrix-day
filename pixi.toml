@@ -22,16 +22,33 @@ python = "==3.10"
 python-lsp-server = ">=1.10.1,<1.11"
 sympy = "==1.12"
 
-[tasks]
-build = {cmd = "julia --project -e 'using Pkg; Pkg.instantiate()'", depends_on = [
+[tasks.build]
+cmd = "julia --project -e 'using Pkg; Pkg.instantiate()'"
+depends_on = [
     "install-julia",
-]}
-doc = {cmd = "julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_directory(Export_output_dir=\"_build\")'", cwd = "docs", depends_on = [
+]
+
+[tasks.doc]
+cmd = "julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_directory(Export_output_dir=\"_build\")'"
+cwd = "docs"
+depends_on = [
     "build",
-]}
-install-julia = "juliaup add 1.10.2 && juliaup default 1.10.2"
-lab = "jupyter lab docs"
-lint = "nbstripout docs/*.ipynb"
-pluto = {cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"docs/K-matrix.jl\")'", depends_on = [
+]
+
+[tasks.install-julia]
+cmd = """
+    juliaup add 1.10.2 && \
+    juliaup default 1.10.2
+"""
+
+[tasks.lab]
+cmd = "jupyter lab docs"
+
+[tasks.lint]
+cmd = "nbstripout docs/*.ipynb"
+
+[tasks.pluto]
+cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"docs/K-matrix.jl\")'"
+depends_on = [
     "build",
-]}
+]
