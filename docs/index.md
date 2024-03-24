@@ -14,8 +14,13 @@ This repository contains educational materials focused on the application of the
 
 ## Contents
 
-[Pluto notebook with interactive K-matrix widget](./_static/K-matrix.html)
+
+- [Pluto notebook with interactive K-matrix widget](./_static/K-matrix.html) (Julia)
+- {doc}`Analyticity: Single-channel Riemann sheets <analyticity-1channel>` (Python)
+- {doc}`Analyticity: Coupled channel Riemann sheets <analyticity-2channel>` (Python)
+
 :::{toctree}
+:hidden:
 :maxdepth: 1
 K matrix with Julia <https://mmikhasenko.github.io/international-k-matrix-day/_static/K-matrix.html>
 analyticity-1channel
