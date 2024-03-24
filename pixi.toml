@@ -7,7 +7,7 @@ platforms = ["linux-64", "osx-64", "win-64"]
 version = "0.1.0"
 
 [dependencies]
-ampform = "==0.15"
+ampform = ">=0.15.0,<0.16"
 ipympl = ">=0.9.3,<0.10"
 ipywidgets = ">=8.1.2,<8.2"
 juliaup = ">=1.13.0"
@@ -18,7 +18,7 @@ jupyterlab-myst = ">=2.3.1,<2.4"
 matplotlib = ">=3.8.3,<3.9"
 myst-nb = ">=1.0.0,<1.1"
 nbstripout = ">=0.7.1,<0.8"
-plotly = "==5.18"
+plotly = ">=5.19,<5.20"
 python = ">=3.10.13,<3.11"
 python-lsp-server = ">=1.10.1,<1.11"
 sphinx-autobuild = ">=2024.2.4,<2024.3"
@@ -26,7 +26,7 @@ sphinx-book-theme = ">=1.1.2,<1.2"
 sphinx-codeautolink = ">=0.15.0,<0.16"
 sphinx-copybutton = ">=0.5.2,<0.6"
 sphinx-design = ">=0.5.0,<0.6"
-sympy = "==1.12"
+sympy = ">=1.12,<1.13"
 taplo = ">=0.9.1,<0.10"
 
 [tasks.doc]
