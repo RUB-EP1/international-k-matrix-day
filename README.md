@@ -36,6 +36,14 @@ This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Ju
 
 > [!WARNING]
 > The first time you run `pixi run pluto`, it can take a few minutes before all Julia packages are downloaded and installed.
+## Additional materials
+
+Supplementary materials, including lecture notes and presentations, can be found here.
+### 1.
+
+### 2. Second talk
+- [Analytic continuation within K-matrix formalism](additional_materials/Analytic_continuation_ComPWA.pdf) (Lena Zeynep Pöpping)
+### 3.
 
 ## Contributing
 
