@@ -1,6 +1,7 @@
 exclude = [
     "**/Manifest.toml",
     "**/Project.toml",
+    ".pixi/**",
 ]
 
 [formatting]
