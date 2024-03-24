@@ -32,7 +32,7 @@ html_favicon = "_static/favicon.ico"
 html_js_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js",
 ]
-html_logo = "https://github.com/mmikhasenko/international-k-matrix-day/assets/29308176/458409be-e6af-4838-89ff-dca8ed531874"
+html_logo = "https://github.com/mmikhasenko/international-k-matrix-day/assets/29308176/1a9db3dc-9398-4c7f-95f2-e46e68809a4d"
 html_static_path = ["_static"]
 html_theme = "sphinx_book_theme"
 html_theme_options = {
