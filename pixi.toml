@@ -16,16 +16,42 @@ jupyterlab-git = ">=0.50.0,<0.51"
 jupyterlab-lsp = ">=5.1.0,<5.2"
 jupyterlab-myst = ">=2.3.1,<2.4"
 matplotlib = ">=3.8.3,<3.9"
+myst-nb = ">=1.0.0,<1.1"
 nbstripout = ">=0.7.1,<0.8"
 plotly = "==5.18"
 python = "==3.10"
 python-lsp-server = ">=1.10.1,<1.11"
+sphinx-autobuild = ">=2024.2.4,<2024.3"
+sphinx-book-theme = ">=1.1.2,<1.2"
+sphinx-codeautolink = ">=0.15.0,<0.16"
+sphinx-copybutton = ">=0.5.2,<0.6"
+sphinx-design = ">=0.5.0,<0.6"
 sympy = "==1.12"
 taplo = ">=0.9.1,<0.10"
 
 [tasks.doc]
 cmd = """
-julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_directory(Export_output_dir="_build")'
+sphinx-build \
+    --keep-going \
+    -TW \
+    -b html \
+    docs/ docs/_build/html
+"""
+
+[tasks.doclive]
+cmd = """
+sphinx-autobuild \
+    --open-browser \
+    --re-ignore '.*/.ipynb_checkpoints/.*' \
+    --re-ignore 'docs/_build/.*' \
+    --re-ignore 'docs/_static/.*' \
+    --watch docs \
+    docs/ docs/_build/html
+"""
+
+[tasks.doc-julia]
+cmd = """
+julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_notebook("K-matrix.jl")'
 """
 cwd = "docs"
 depends_on = [
