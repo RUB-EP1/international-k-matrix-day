@@ -1,9 +1,11 @@
 {
-    "recommendations": [
-        "eamodio.gitlens",
-        "juliacomputing.pluto-vscode",
-        "julialang.language-julia",
-        "tamasfe.even-better-toml",
-        "yzhang.markdown-all-in-one",
-    ]
+  "recommendations": [
+    "eamodio.gitlens",
+    "juliacomputing.pluto-vscode",
+    "julialang.language-julia",
+    "ms-vscode.live-server",
+    "tamasfe.even-better-toml",
+    "yzhang.markdown-all-in-one",
+    "github.vscode-github-actions"
+  ]
 }
