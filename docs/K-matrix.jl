@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.40
+# v0.19.36
 
 using Markdown
 using InteractiveUtils
@@ -33,25 +33,20 @@ md"""
 
 This educational material introduces the K-matrix formalism, focusing on its practical application in describing scattering amplitude observables. The K-matrix approach provides a robust framework for analyzing scattering processes, essential for understanding resonance phenomena in hadron physics. One of the main challenges in employing this formalism lies in the initial estimation of the bare parameters, which requires a thorough comprehension of the underlying principles and mechanics of the model.
 
-On the plot below one can find illustration of the ab->cd scattering process with resonance which has mass m_{0} and width Г_{0}. This process can be described with K-matrix:
+On the plot below one can find illustration of the ab->cd scattering process with resonance which has mass $m_{0}$ and width $Г_{0}$. This process can be described with K-matrix:
 
-$K_{ij} = \frac{g_{ij}}{m_0^2-s}$
+$K_{ij} = \frac{g_i g_j}{m_0^2-s}$
 
-where $g_{ij}$ indicates different possible channels of the scattering process and $s=m^{2}$. K-matrix has to be unitaruan and hermitian by definition and $K_{ij}$ have to be real.
+where $g_{ij}$ indicates different possible channels of the scattering process and $s=m^{2}$. K-matrix has to be real and symmetric by construction.
 
-Then one can introduce transition T-matrix:
+Then, one can introduce transition T-matrix:
 
 $T = [I -i  K \rho]^{-1} K$
 where $I$ is identity matrix of three dimensions and $\rho$ being a diagonal matrix of phase space factors, $\rho=\text{Diag}(\rho_1,\rho_2,\rho_3)$.
-
-From that one can derive Flatte formula;
-
-$T_{ij} = \frac{g_i g_j}{m_0^2-s-\sum_{i}g_{i}g_{j} \rho_j}$
-
 """
 
 # ╔═╡ 437d3bf9-cf44-40a8-97bc-8aee4b62d069
-RobustLocalResource("figures/1x1_scattering.png", "figures/1x1_scattering.png", cache=false)
+RobustLocalResource("",	joinpath("..","figures","1x1_scattering.png"))
 
 # ╔═╡ e8ba4b4e-2d21-4bfe-bf32-02969f9b2970
 md"""
@@ -71,29 +66,20 @@ These examples provide insights into estimating parameters, understanding resona
 TableOfContents()
 
 # ╔═╡ a4750e66-b448-479e-a5dd-b9aec0f3a857
-aside(RobustLocalResource("figures/3x3_scattering.png", "figures/3x3_scattering.png", cache=false))
+aside(RobustLocalResource("",	joinpath("..","figures","3x3_scattering.png")))
 
 # ╔═╡ c2a0a8bc-c1e6-4a48-91dc-590ca79383ff
 md"""
 ## Example 1: Multichannel Breit-Wigner Model and Resonance Widths
 
-The first example delves into the relationship between the K-matrix and the multichannel Breit-Wigner (BW) model. It demonstrates how resonance widths are generated within this framework, offering insight into the dynamic nature of resonances. This example is pivotal for appreciating how the K-matrix formalism can be used to describe complex resonance structures in multichannel scattering processes.
+The first example explains the relationship between the K-matrix and the multichannel Breit-Wigner (BW) model. It demonstrates how resonance widths are generated within this framework, offering insight into the dynamic nature of resonances. This example is pivotal for appreciating how the K-matrix formalism can be used to describe complex resonance structures in multichannel scattering processes.
 """
 
 # ╔═╡ 798f53e9-d871-42d1-a81c-d35adc7ece21
 md"""
 ### Setup
 
-The K mattrix in this 3x3 case would be defined as:
-
-$K = \frac{1}{m_0^2-s}
-\begin{pmatrix}
-g_1^2 & g_1 g_2 & g_1 g_3\\
-g_2 g_1 & g_2^2 & g_2 g_3\\
-g_3 g_1 & g_3 g_2 & g_3^2\\
-\end{pmatrix}$ 
-
-This gives transition amplitude T-matrix:
+Let's consider 3 coupled channels, the scattering amplitude T is a 3x3 matrix:
 
 $T = \begin{pmatrix}
 T_{1\to1} & T_{1\to2} & T_{1\to3}\\
@@ -101,27 +87,37 @@ T_{2\to1} & T_{2\to2} & T_{2\to3}\\
 T_{3\to1} & T_{3\to2} & T_{3\to3}\\
 \end{pmatrix}$
 
+We model it with the simplest **one-pole** K-matrix.
+
+$K = \frac{1}{m_0^2-s}
+\begin{pmatrix}
+g_1^2 & g_1 g_2 & g_1 g_3\\
+g_2 g_1 & g_2^2 & g_2 g_3\\
+g_3 g_1 & g_3 g_2 & g_3^2\\
+\end{pmatrix}$ 
 """
+
+# ╔═╡ 7b717c8f-1fb8-4892-a250-c77e5e088445
+aside(tip(md"$T = [1-iK\rho]^{-1}K$"))
 
 # ╔═╡ 1215bc85-4760-473b-93d0-5d6a8952e27e
-md"""
+question_box(md"""
+**E1.Q1:** When $K$ is degenerate and has rank 1, the expression for T is simple. Figure it out for 3x3 matrix.
 
-Now one can obtain espression for T-matrix using Flatte formula:
-
-"""
+**Extra difficult:** Can you prove it for general case?
+""")
 
 # ╔═╡ 1273bd41-9986-4b9f-9e06-b3bed7ab65f0
-aside(tip(md"$T_{ij} = \frac{g_i g_j}{m_0^2-s-\sum_{i}g_{i}g_{j} \rho_j}$") )
+answer_box(
+md"$T_{ij} = \frac{g_i g_j}{m_0^2-s-ig_1^2 \rho_1-ig_2^2 \rho_2-ig_3^2 \rho_3}$
 
-# ╔═╡ 13a0e612-1bca-4cff-a534-520da11a93ca
-md"""
-
-$T_{ij} = \frac{g_i g_j}{m_0^2-s-ig_1^2 \rho_1-ig_2^2 \rho_2-ig_3^2 \rho_3}$
-
-"""
+This is expression known as the [Flatte formula](https://inspirehep.net/literature/108884)
+")
 
 # ╔═╡ 6d5acd0c-dbcf-4d0a-a94c-76ac59006fc8
 md"""
+
+## Compare to BW
 
 Let's compare to the BW parametrization
 
@@ -169,7 +165,7 @@ md"""
 
 Now, otherwise, it is possible to estimate K-matrix parameters when one knows FWHM and $m_{0}$ from the peak:
 
-$g_{i}\approx\sqrt\frac{Г_{0}m_{0}}{\rho_{i}}$
+$g_{i}\approx\sqrt\frac{Г_{0}m_{0}}{\rho_{i}(m_0)}$
 
 """
 
@@ -181,7 +177,7 @@ In the second example, we explore the 2x2 problem, focusing on scenarios with we
 """
 
 # ╔═╡ 2486eb34-a858-4ea9-99e1-f17627589461
-RobustLocalResource("figures/2x2_scattering.png", "figures/2x2_scattering.png", cache=false)
+RobustLocalResource("",	joinpath("..","figures","2x2_scattering.png"))
 
 # ╔═╡ 1663348b-ed67-4851-9365-9641e6379fcd
 md"""
@@ -197,7 +193,7 @@ h_1^2 & h_1 h_2\\
 h_2 h_1 & h_2^2
 \end{pmatrix}$
 
-We start with setting off-diagonal parameters described coupling to zeros ${g_{2}=h{1}}=0$:
+We start with setting off-diagonal parameters described coupling to zeros $g_{2}=h_{1}=0$:
 
 $K =
 \begin{pmatrix}
@@ -215,35 +211,42 @@ In that case, the T-matrix would be simply:
 """
 
 # ╔═╡ a223cbff-88b0-4a28-af53-c139e7b9108a
-tip(md"For one resonance: $T =
+tip(md"For single resonance:
+
+$T =
+\frac{1}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2}
 \begin{pmatrix}
-\frac{g_1^2}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2} & \frac{g_1g_2}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2}\\
-\frac{g_2g_1}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2} & \frac{g_2^2}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2}
-\end{pmatrix}$")
+g_1^2 & g_1g_2\\
+g_2g_1 & g_2^2
+\end{pmatrix}$
+
+")
 
 # ╔═╡ 9d9a89ed-76f3-4e76-a3cc-0d33c747fbb5
-md"""
-
+answer_box(md"""
 $T =
 \begin{pmatrix}
 \frac{g_1^2}{m_{(1)}^2-s-ig_1^2\rho_1} & 0\\
 0 & \frac{h_2^2}{m_{(2)}^2-s-ih_2^2\rho_2}
 \end{pmatrix}$
-
-"""
+""")
 
 # ╔═╡ 729c86ab-cf81-48bf-82be-b89cf28eaee6
 md"""
+
+### Demo
 Non-diagonal couplings make the system coupled. The channels start talking to each other.
 - g₂ = $(@bind g2_T2 Slider(range(-1,3,81), default=0.0, show_value=true)) GeV for the first channel,
 - h₁ = $(@bind h1_T2 Slider(range(-1,3,81), default=0.0, show_value=true)) GeV for the second channel, and 
 """
 
 # ╔═╡ a7a68629-bf6f-435e-9a97-de9a02a31160
-md"""
-Let's find the first expansion term to reflect on how a weakly coupled resonances show up in the second channel. For that put g_2=\epsilon.
+question_box(md"""
+Let's find the first expansion term to reflect on how a weakly coupled resonances show up in the second channel. For that put $g_2=\epsilon$, $h_1 = 0$.
 
-Tnen:
+Then,
+
+$K = K^{(1)} + K^{(2)}$
 
 $K^{(1)} = \frac{1}{m_{(1)}^2-s}
 \begin{pmatrix}
@@ -255,7 +258,7 @@ g_1^2 & g_1 \epsilon\\
 g_1^2 & g_1 \epsilon\\
 \epsilon g_1 & 0
 \end{pmatrix}$ 
-"""
+""")
 
 # ╔═╡ cce481eb-13a8-4e49-b20e-23ec4395072d
 md"""
@@ -350,7 +353,8 @@ md"""
 theme(:wong2, frame=:box, grid=false, minorticks=true,
     guidefontvalign=:top, guidefonthalign=:right,
     foreground_color_legend=nothing,
-    xlim=(:auto, :auto), ylim=(:auto, :auto), lab="", xlab="Mass of system [GeV]")
+    xlim=(:auto, :auto), ylim=(:auto, :auto),
+	lab="", xlab="Mass of system [GeV]")
 
 # ╔═╡ ae68a0e2-46ce-4186-97b3-4b03b5f2d8ce
 begin
@@ -522,17 +526,22 @@ T3 = let
 end;
 
 # ╔═╡ 8556c8f4-89e4-4544-ad73-4da8b43a7051
-let
+p = let
 	f1(x)=1/(T3.K.poles[1].M-x)
 	f2(x)=1/(T3.K.poles[2].M-x)
 	f3(x)=f1(x)+f2(x)
 	plot(title="K-matrix parameter")
-	plot!(rangeclamp(f1), 3, 7, lab="First channel")
-	plot!(rangeclamp(f2), 3, 7, lab="Second channel")
+	plot!(rangeclamp(f1), 3, 7, lab="First pole, K1")
+	plot!(rangeclamp(f2), 3, 7, lab="Second pole, K2")
 	plot!(rangeclamp(f3), 3, 7, lab="Total")
 	vline!([T3.K.poles[1].M, T3.K.poles[2].M], linestyle=:dash)
-	hline!([0], color=:black)
+	hline!([0], color=:black, size=(500,300), leg=:top)
 end
+
+# ╔═╡ e9c0d423-793d-4997-a0fd-5c67b41fffb2
+answer_box(
+TwoColumn(md"Here is my comments for the plot", plot(p))
+)
 
 # ╔═╡ ff61d6e1-5681-4d15-8164-62baee4613ba
 A_E3 = ProductionAmplitude(T3, SVector{2}(α1_E3, α2_E3*cis(ϕ2_E3)), SVector{1}(0));
@@ -649,7 +658,7 @@ StaticArrays = "~1.9.3"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.9.3"
+julia_version = "1.10.1"
 manifest_format = "2.0"
 project_hash = "6ae51dbecc45796d31d4f3f87590513ec17217d5"
 
@@ -792,7 +801,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+0"
+version = "1.1.0+0"
 
 [[deps.CompositionsBase]]
 git-tree-sha1 = "802bb88cd69dfd1509f6670416bd4434015693ad"
@@ -1089,9 +1098,9 @@ version = "3.0.2+0"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
-git-tree-sha1 = "0015726aa3eb28973fbbdbb7ca2ed6396ffe3a23"
+git-tree-sha1 = "7b762d81887160169ddfc93a47e5fd7a6a3e78ef"
 uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
-version = "0.9.30"
+version = "0.9.29"
 
 [[deps.LAME_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1139,21 +1148,26 @@ version = "0.16.2"
 [[deps.LibCURL]]
 deps = ["LibCURL_jll", "MozillaCACerts_jll"]
 uuid = "b27032c2-a3e7-50c8-80cd-2d36dbcbfd21"
-version = "0.6.3"
+version = "0.6.4"
 
 [[deps.LibCURL_jll]]
 deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll", "Zlib_jll", "nghttp2_jll"]
 uuid = "deac9b47-8bc7-5906-a0fe-35ac56dc84c0"
-version = "7.84.0+0"
+version = "8.4.0+0"
 
 [[deps.LibGit2]]
-deps = ["Base64", "NetworkOptions", "Printf", "SHA"]
+deps = ["Base64", "LibGit2_jll", "NetworkOptions", "Printf", "SHA"]
 uuid = "76f85450-5226-5b5a-8eaa-529ad045b433"
+
+[[deps.LibGit2_jll]]
+deps = ["Artifacts", "LibSSH2_jll", "Libdl", "MbedTLS_jll"]
+uuid = "e37daf67-58a4-590a-8e99-b0245dd2ffc5"
+version = "1.6.4+0"
 
 [[deps.LibSSH2_jll]]
 deps = ["Artifacts", "Libdl", "MbedTLS_jll"]
 uuid = "29816b5a-b9ab-546f-933c-edad1886dfa8"
-version = "1.10.2+0"
+version = "1.11.0+1"
 
 [[deps.Libdl]]
 uuid = "8f399da3-3557-5675-b5ff-fb832c97cbdb"
@@ -1265,7 +1279,7 @@ version = "1.1.9"
 [[deps.MbedTLS_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "c8ffd9c3-330d-5841-b78e-0817d7145fa1"
-version = "2.28.2+0"
+version = "2.28.2+1"
 
 [[deps.Measures]]
 git-tree-sha1 = "c13304c81eec1ed3af7fc20e75fb6b26092a1102"
@@ -1283,7 +1297,7 @@ uuid = "a63ad114-7e13-5084-954f-fe012c677804"
 
 [[deps.MozillaCACerts_jll]]
 uuid = "14a3606d-f60d-562e-9121-12d972cd8159"
-version = "2022.10.11"
+version = "2023.1.10"
 
 [[deps.NaNMath]]
 deps = ["OpenLibm_jll"]
@@ -1304,12 +1318,12 @@ version = "1.3.5+1"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.21+4"
+version = "0.3.23+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "05823500-19ac-5b8b-9628-191a04bc5112"
-version = "0.8.1+0"
+version = "0.8.1+2"
 
 [[deps.OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
@@ -1343,7 +1357,7 @@ version = "1.6.3"
 [[deps.PCRE2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "efcefdf7-47ab-520b-bdef-62a2eaa19f15"
-version = "10.42.0+0"
+version = "10.42.0+1"
 
 [[deps.Parameters]]
 deps = ["OrderedCollections", "UnPack"]
@@ -1371,7 +1385,7 @@ version = "0.42.2+0"
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
 uuid = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
-version = "1.9.2"
+version = "1.10.0"
 
 [[deps.PlotThemes]]
 deps = ["PlotUtils", "Statistics"]
@@ -1462,7 +1476,7 @@ deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
 uuid = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
 
 [[deps.Random]]
-deps = ["SHA", "Serialization"]
+deps = ["SHA"]
 uuid = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 
 [[deps.RecipesBase]]
@@ -1554,6 +1568,7 @@ version = "1.2.1"
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
 uuid = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+version = "1.10.0"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
@@ -1590,7 +1605,7 @@ version = "1.4.2"
 [[deps.Statistics]]
 deps = ["LinearAlgebra", "SparseArrays"]
 uuid = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
-version = "1.9.0"
+version = "1.10.0"
 
 [[deps.StatsAPI]]
 deps = ["LinearAlgebra"]
@@ -1605,9 +1620,9 @@ uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 version = "0.34.2"
 
 [[deps.SuiteSparse_jll]]
-deps = ["Artifacts", "Libdl", "Pkg", "libblastrampoline_jll"]
+deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
 uuid = "bea87d4a-7f5b-5778-9afe-8cc45184846c"
-version = "5.10.1+6"
+version = "7.2.1+1"
 
 [[deps.TOML]]
 deps = ["Dates"]
@@ -1871,7 +1886,7 @@ version = "1.5.0+0"
 [[deps.Zlib_jll]]
 deps = ["Libdl"]
 uuid = "83775a58-1f1d-513f-b197-d71354ab007a"
-version = "1.2.13+0"
+version = "1.2.13+1"
 
 [[deps.Zstd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1912,7 +1927,7 @@ version = "0.15.1+0"
 [[deps.libblastrampoline_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850b90-86db-534c-a0d3-1478176c7d93"
-version = "5.8.0+0"
+version = "5.8.0+1"
 
 [[deps.libevdev_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1953,12 +1968,12 @@ version = "1.1.6+0"
 [[deps.nghttp2_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "8e850ede-7688-5339-a07c-302acd2aaf8d"
-version = "1.48.0+0"
+version = "1.52.0+1"
 
 [[deps.p7zip_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
-version = "17.4.0+0"
+version = "17.4.0+2"
 
 [[deps.x264_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1980,16 +1995,16 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
-# ╟─9ade0bbc-0b04-4e6d-92cf-54062b638cfe
+# ╠═9ade0bbc-0b04-4e6d-92cf-54062b638cfe
 # ╟─437d3bf9-cf44-40a8-97bc-8aee4b62d069
 # ╟─e8ba4b4e-2d21-4bfe-bf32-02969f9b2970
-# ╟─cb9fdca3-db42-4501-a2fe-c3ff099b2d83
+# ╠═cb9fdca3-db42-4501-a2fe-c3ff099b2d83
 # ╟─a4750e66-b448-479e-a5dd-b9aec0f3a857
 # ╟─c2a0a8bc-c1e6-4a48-91dc-590ca79383ff
-# ╟─798f53e9-d871-42d1-a81c-d35adc7ece21
+# ╠═798f53e9-d871-42d1-a81c-d35adc7ece21
+# ╟─7b717c8f-1fb8-4892-a250-c77e5e088445
 # ╟─1215bc85-4760-473b-93d0-5d6a8952e27e
 # ╟─1273bd41-9986-4b9f-9e06-b3bed7ab65f0
-# ╟─13a0e612-1bca-4cff-a534-520da11a93ca
 # ╟─6d5acd0c-dbcf-4d0a-a94c-76ac59006fc8
 # ╟─fe35af83-4910-48e4-b9de-5b8a1f85fb72
 # ╟─3fde6651-a704-4757-b282-3a7cfcd36f6e
@@ -2000,7 +2015,7 @@ version = "1.4.1+1"
 # ╟─f880fd7c-d93d-4f76-9454-9fd59bcacff6
 # ╟─915f987d-9bb5-4e0b-9cf0-f52e3937695a
 # ╟─2486eb34-a858-4ea9-99e1-f17627589461
-# ╟─a6fd628c-86db-4d3f-836b-ff376cac7f1d
+# ╠═a6fd628c-86db-4d3f-836b-ff376cac7f1d
 # ╟─1663348b-ed67-4851-9365-9641e6379fcd
 # ╟─96dc5bd2-c84e-4c6d-872d-e33c1e89758a
 # ╟─a223cbff-88b0-4a28-af53-c139e7b9108a
@@ -2017,22 +2032,23 @@ version = "1.4.1+1"
 # ╟─8b92df7f-d97b-43fa-8ac3-fed8ee974f5f
 # ╟─7b4fa73c-1075-4271-8d2f-1668d98904ab
 # ╟─e6f501d6-14f8-4f04-8711-1cbccce3a60c
-# ╟─8556c8f4-89e4-4544-ad73-4da8b43a7051
-# ╠═91db142a-109f-414a-8d2c-9d3cd92bae40
+# ╠═8556c8f4-89e4-4544-ad73-4da8b43a7051
+# ╟─e9c0d423-793d-4997-a0fd-5c67b41fffb2
+# ╟─91db142a-109f-414a-8d2c-9d3cd92bae40
 # ╟─f9dad52e-d6a2-46c4-a5b3-91a50c9425c1
 # ╟─ff61d6e1-5681-4d15-8164-62baee4613ba
 # ╟─b90a1c10-8e57-4b2a-b48a-ccb78010a4f5
 # ╟─3019d77e-a41e-4fa5-a0bf-b91d3d72e96f
-# ╟─2a5d2458-9958-4c9b-a183-d7029b6360c9
-# ╟─25758574-5da4-4fbe-946d-d55f6210b7e2
-# ╟─ae68a0e2-46ce-4186-97b3-4b03b5f2d8ce
-# ╟─0360447c-c6c7-4ba6-8e5f-a20d5797995b
-# ╟─1072afe6-bad7-4de3-9ad2-6dcef2b924bb
-# ╟─ebf8b842-99ce-40e8-9bf4-931471879bf9
-# ╟─9a2e8210-c140-4689-bb16-2aab3c3b2aaa
-# ╟─fb45f5a8-15c4-4695-b36b-f21aab1e3d80
+# ╠═2a5d2458-9958-4c9b-a183-d7029b6360c9
+# ╠═25758574-5da4-4fbe-946d-d55f6210b7e2
+# ╠═ae68a0e2-46ce-4186-97b3-4b03b5f2d8ce
+# ╠═0360447c-c6c7-4ba6-8e5f-a20d5797995b
+# ╠═1072afe6-bad7-4de3-9ad2-6dcef2b924bb
+# ╠═ebf8b842-99ce-40e8-9bf4-931471879bf9
+# ╠═9a2e8210-c140-4689-bb16-2aab3c3b2aaa
+# ╠═fb45f5a8-15c4-4695-b36b-f21aab1e3d80
 # ╟─474e5d19-b537-42d2-9e92-2a26996cee2d
-# ╟─35b9a451-5fac-46e2-97bb-ebc19d4b3418
-# ╟─2aef1bd5-7a81-417b-a090-77644fc5f640
+# ╠═35b9a451-5fac-46e2-97bb-ebc19d4b3418
+# ╠═2aef1bd5-7a81-417b-a090-77644fc5f640
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
