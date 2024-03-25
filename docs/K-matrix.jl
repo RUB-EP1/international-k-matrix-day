@@ -37,12 +37,12 @@ On the plot below one can find illustration of the ab->cd scattering process wit
 
 $K_{ij} = \frac{g_i g_j}{m_0^2-s}$
 
-where $g_{ij}$ indicates different possible channels of the scattering process and $s=m^{2}$. K-matrix has to be real and symmetric by construction.
+where $g_{i} g_j$ indicates different possible channels of the scattering process and $s=m^{2}$. K-matrix has to be real and symmetric by construction.
 
 Then, one can introduce transition T-matrix:
 
 $T = [I -i  K \rho]^{-1} K$
-where $I$ is identity matrix of three dimensions and $\rho$ being a diagonal matrix of phase space factors, $\rho=\text{Diag}(\rho_1,\rho_2,\rho_3)$.
+where $I$ is identity matrix of three dimensions and $\rho$ being a diagonal matrix of phase space factors$.
 """
 
 # ╔═╡ 437d3bf9-cf44-40a8-97bc-8aee4b62d069
@@ -95,6 +95,8 @@ g_1^2 & g_1 g_2 & g_1 g_3\\
 g_2 g_1 & g_2^2 & g_2 g_3\\
 g_3 g_1 & g_3 g_2 & g_3^2\\
 \end{pmatrix}$ 
+
+and $\rho=\text{Diag}(\rho_1,\rho_2,\rho_3)$
 """
 
 # ╔═╡ 7b717c8f-1fb8-4892-a250-c77e5e088445
@@ -294,7 +296,7 @@ The third example examines a single-channel problem featuring two prominent reso
 """
 
 # ╔═╡ 12a615bb-97b8-4fde-bd66-ac7083970e0e
-RobustLocalResource("figures/1x1_production.png", "figures/1x1_production.png", cache=false)
+RobustLocalResource("", joinpath("..","figures", "1x1_production.png"), cache=false)
 
 # ╔═╡ 27f0ae17-b61c-49c5-b4fc-6de5d2ddda94
 md"""
@@ -1995,13 +1997,13 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
-# ╠═9ade0bbc-0b04-4e6d-92cf-54062b638cfe
+# ╟─9ade0bbc-0b04-4e6d-92cf-54062b638cfe
 # ╟─437d3bf9-cf44-40a8-97bc-8aee4b62d069
 # ╟─e8ba4b4e-2d21-4bfe-bf32-02969f9b2970
 # ╠═cb9fdca3-db42-4501-a2fe-c3ff099b2d83
 # ╟─a4750e66-b448-479e-a5dd-b9aec0f3a857
 # ╟─c2a0a8bc-c1e6-4a48-91dc-590ca79383ff
-# ╠═798f53e9-d871-42d1-a81c-d35adc7ece21
+# ╟─798f53e9-d871-42d1-a81c-d35adc7ece21
 # ╟─7b717c8f-1fb8-4892-a250-c77e5e088445
 # ╟─1215bc85-4760-473b-93d0-5d6a8952e27e
 # ╟─1273bd41-9986-4b9f-9e06-b3bed7ab65f0
