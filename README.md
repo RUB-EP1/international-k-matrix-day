@@ -21,7 +21,7 @@ The core of this repository are the following interactive notebooks:
 
 Supplementary materials, including lecture notes and presentations, can be found here:
 
-1.
+1. **Modelling conventions**: [PDG review on resonances](https://pdg.lbl.gov/2023/reviews/rpp2023-rev-resonances.pdf)
 2. **Second talk**: [Analytic continuation within K-matrix formalism](additional_materials/Analytic_continuation_ComPWA.pdf) (Lena Zeynep Pöpping)
 3.
 
