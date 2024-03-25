@@ -1,0 +1,73 @@
+name: Documentation
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: |-
+    ${{ github.ref != format('refs/heads/{0}', github.event.repository.default_branch) }}
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    env:
+      FORCE_COLOR: yes
+      PIXI_COLOR: always
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Julia cache
+        uses: actions/cache@v4
+        with:
+          key: |
+            julia-${{hashFiles('Manifest.toml')}}-${{hashFiles('**/*.jl')}}
+          restore-keys: |
+            julia-${{hashFiles('Manifest.toml')}}
+            julia
+          path: |
+            ~/.julia/
+      - uses: prefix-dev/setup-pixi@v0.5.1
+        with:
+          cache: true
+      - name: Jupyter cache
+        uses: actions/cache@v4
+        with:
+          key: |
+            jupyter-cache-${{hashFiles('pixi.lock')}}-${{hashFiles('docs/*.ipynb')}}
+          restore-keys: |
+            jupyter-cache-${{hashFiles('pixi.lock')}}
+            jupyter-cache
+          path: |
+            docs/_build/.jupyter_cache
+            docs/_build/jupyter_execute
+      - run: pixi run doc-julia
+      - run: pixi run doc
+      - if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_build/html
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'push' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-22.04
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

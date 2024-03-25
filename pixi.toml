@@ -1,16 +1,83 @@
 [project]
-name = "international-k-matrix-day"
-version = "0.1.0"
-description = "Educational materials for the K-matrix formalism in the field of hadron physics"
 authors = ["Misha Mikhasenko <mikhail.mikhasenko@gmail.com>"]
 channels = ["conda-forge"]
-platforms = ["linux-64", "win-64"]
+description = "Educational materials for the K-matrix formalism in the field of hadron physics"
+name = "international-k-matrix-day"
+platforms = ["linux-64", "osx-64", "win-64"]
+version = "0.1.0"
 
 [dependencies]
+ampform = ">=0.15.0,<0.16"
+ipympl = ">=0.9.3,<0.10"
+ipywidgets = ">=8.1.2,<8.2"
 juliaup = ">=1.13.0"
+jupyterlab = ">=4.1.5,<4.2"
+jupyterlab-git = ">=0.50.0,<0.51"
+jupyterlab-lsp = ">=5.1.0,<5.2"
+jupyterlab-myst = ">=2.3.1,<2.4"
+matplotlib = ">=3.8.3,<3.9"
+myst-nb = ">=1.0.0,<1.1"
+nbstripout = ">=0.7.1,<0.8"
+plotly = ">=5.19,<5.20"
+python = ">=3.10.13,<3.11"
+python-lsp-server = ">=1.10.1,<1.11"
+sphinx-autobuild = ">=2024.2.4,<2024.3"
+sphinx-book-theme = ">=1.1.2,<1.2"
+sphinx-codeautolink = ">=0.15.0,<0.16"
+sphinx-copybutton = ">=0.5.2,<0.6"
+sphinx-design = ">=0.5.0,<0.6"
+sympy = ">=1.12,<1.13"
+taplo = ">=0.9.1,<0.10"
 
-[tasks]
-build = "julia --project -e 'using Pkg; Pkg.instantiate()'"
-pluto = { cmd = "julia --project -e 'using Pluto; Pluto.run(notebook=\"K-matrix.jl\")'", depends_on = [
-    "build",
-] }
+[tasks.doc]
+cmd = """
+sphinx-build \
+    --keep-going \
+    -TW \
+    -b html \
+    docs/ docs/_build/html
+"""
+
+[tasks.doclive]
+cmd = """
+sphinx-autobuild \
+    --open-browser \
+    --re-ignore '.*/.ipynb_checkpoints/.*' \
+    --re-ignore 'docs/_build/.*' \
+    --re-ignore 'docs/_static/.*' \
+    --watch docs \
+    docs/ docs/_build/html
+"""
+
+[tasks.doc-julia]
+cmd = """
+julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_notebook("K-matrix.jl")'
+"""
+cwd = "docs"
+depends_on = [
+    "install-julia",
+]
+
+[tasks.install-julia]
+cmd = """
+juliaup add 1.10.2 && \
+juliaup default 1.10.2 && \
+julia --project -e 'using Pkg; Pkg.instantiate()'
+"""
+
+[tasks.lab]
+cmd = "jupyter lab docs"
+
+[tasks.lint]
+cmd = """
+nbstripout docs/*.ipynb && \
+taplo format
+"""
+
+[tasks.pluto]
+cmd = """
+julia --project -e 'using Pluto; Pluto.run(notebook="docs/K-matrix.jl")'
+"""
+depends_on = [
+    "install-julia",
+]

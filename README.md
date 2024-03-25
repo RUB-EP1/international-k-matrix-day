@@ -13,6 +13,18 @@ This repository contains educational materials focused on the application of the
 - **Exercise Solutions**: Solutions to the exercises provided in the practical examples notebook.
 - **Supplementary Materials**: Additional resources and readings for further exploration of the $K$-matrix formalism and its applications in hadron physics.
 
+The core of this repository are the following interactive notebooks:
+
+- [Pluto notebook with interactive K-matrix widget](./docs/K-matrix.jl) (Julia)
+- [Analyticity: Single-channel Riemann sheets](./docs/analyticity-1channel.ipynb) (Python)
+- [Analyticity: Coupled channel Riemann sheets](./docs/analyticity-2channel.ipynb) (Python)
+
+Supplementary materials, including lecture notes and presentations, can be found here:
+
+1.
+2. **Second talk**: [Analytic continuation within K-matrix formalism](additional_materials/Analytic_continuation_ComPWA.pdf) (Lena Zeynep Pöpping)
+3.
+
 ## Installation Instructions
 
 To get started with the materials in this repository, clone the repository using:
@@ -21,16 +33,21 @@ To get started with the materials in this repository, clone the repository using
 git clone https://github.com/mmikhasenko/international-k-matrix-day
 ```
 
-This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Julia](https://julialang.org/). You can install and run Pluto and Julia yourself, but you can also use the provided [Pixi](https://pixi.sh) environment.
+This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Julia](https://julialang.org/), and [Jupyter notebooks](https://jupyter.org), which requires [Python](https://www.python.org/downloads). You can install and run Pluto and Jupyter yourself, but you can also use the provided [Pixi](https://pixi.sh) environment.
 
 1. [Install Pixi](https://pixi.sh/latest/#installation)
-2. Run the Pixi `pluto` task:
+2. Run one of the Pixi tasks:
+
+   ```shell
+   pixi run lab
+   ```
+
    ```shell
    pixi run pluto
    ```
 
 > [!WARNING]
-> The first time you run this command, it can take a few minutes before all Julia packages are downloaded and installed.
+> The first time you run `pixi run pluto`, it can take a few minutes before all Julia packages are downloaded and installed.
 
 ## Contributing
 
