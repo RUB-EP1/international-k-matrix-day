@@ -14,10 +14,17 @@ This repository contains educational materials focused on the application of the
 
 ## Contents
 
+The core of this repository are the following interactive notebooks:
 
 - [Pluto notebook with interactive K-matrix widget](./_static/K-matrix.html) (Julia)
 - {doc}`Analyticity: Single-channel Riemann sheets <analyticity-1channel>` (Python)
 - {doc}`Analyticity: Coupled channel Riemann sheets <analyticity-2channel>` (Python)
+
+Supplementary materials, including lecture notes and presentations, can be found here:
+
+1.
+2. **Second talk**: {download}`Analytic continuation within K-matrix formalism <../additional_materials/Analytic_continuation_ComPWA.pdf>` (Lena Zeynep Pöpping)
+3.
 
 :::{toctree}
 :hidden:
