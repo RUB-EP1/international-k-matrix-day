@@ -49,6 +49,12 @@ This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Ju
 > [!WARNING]
 > The first time you run `pixi run pluto`, it can take a few minutes before all Julia packages are downloaded and installed.
 
+## References
+
+- K-matrix report from COMPWA project (see [here](https://ampform.readthedocs.io/stable/usage/dynamics/k-matrix/), [more references](https://ampform.readthedocs.io/stable/references/))
+- "A Primer on K-matrix Formalism" by Chung (download from [here](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=88b101a5300736f78293cf10116c32e5d25e3c91))
+- "The K-matrix formalism for overlapping resonances" by I.J.R. Aitchison, ([journal paper](https://www.sciencedirect.com/science/article/pii/0375947472903053))
+
 ## Contributing
 
 We welcome contributions and suggestions to improve the educational materials. Please feel free to open an issue or submit a pull request with your enhancements.
