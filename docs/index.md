@@ -29,7 +29,7 @@ Supplementary materials, including lecture notes and presentations, can be found
 :::{toctree}
 :hidden:
 :maxdepth: 1
-K matrix with Julia <https://mmikhasenko.github.io/international-k-matrix-day/_static/K-matrix.html>
+K matrix with Julia <https://rub-ep1.github.io/international-k-matrix-day/_static/K-matrix.html>
 analyticity-1channel
 analyticity-2channel
 :::
@@ -39,7 +39,7 @@ analyticity-2channel
 To run the materials in this repository locally, clone the repository using:
 
 ```shell
-git clone https://github.com/mmikhasenko/international-k-matrix-day
+git clone https://github.com/rub-ep1/international-k-matrix-day
 ```
 
 This course utilizes [Pluto notebooks](https://plutojl.org/), which requires [Julia](https://julialang.org/), and [Jupyter notebooks](https://jupyter.org), which requires [Python](https://www.python.org/downloads). You can install and run Pluto and Jupyter yourself, but you can also use the provided [Pixi](https://pixi.sh) environment.

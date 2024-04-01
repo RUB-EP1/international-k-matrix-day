@@ -12,7 +12,7 @@ def copy_julia_html_page() -> list[str]:
 
 
 BRANCH = "main"
-ORGANIZATION = "mmikhasenko"
+ORGANIZATION = "RUB-EP1"
 REPO_NAME = "international-k-matrix-day"
 copy_julia_html_page()
 
