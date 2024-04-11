@@ -189,14 +189,14 @@ end;
 
 # ╔═╡ fe359958-cafc-4916-9d34-013dc955746a
 model = let
-	# two channels
+	# five channels
 	channels = SVector(
 			TwoBodyChannel(mπ, mπ), # ππ
 			TwoBodyChannel(mK, mK), # KK
 			RhoRho(), # 4π
 			TwoBodyChannel(mη, mη), # ηη
-	        TwoBodyChannel(mη, mη′)) 
-	# two bare pole
+	        TwoBodyChannel(mη, mη′)) # ηη′
+	# five bare pole
 	MG = [
 		(M=0.65100, gs = [0.22889, 0.94128, 0.36856, 0.3365, 0.18171]),
 		(M=1.20360, gs = [-0.55377, 0.55095, 0.23888, 0.40907, -0.17558]),
@@ -204,7 +204,7 @@ model = let
 		(M=1.21000, gs = [-0.39899, 0.39065, 0.18340, 0.19906, -0.00355]),
 		(M=1.82206, gs = [-0.34639, 0.31503, 0.18681, -0.00984, 0.22358])
 	]
-	#
+	# slowly varying term
 	f_scatt = [
 		0.23399 0.15044 -0.20545 0.32825 0.35412
 		fill(0,(4,5))
@@ -212,11 +212,12 @@ model = let
 	# 
 	K = Kmatrix(MG, f_scatt)
 	T = Tmatrix(K, channels)
-	ProductionAmplitude(T, SVector{5}(zeros(5)), SVector{5}(zeros(5)))
+	# 
+	ProductionAmplitude(T, SVector(0,0,0,0,0.0), SVector(0,0,0,0,0.0))
 end;
 
 # ╔═╡ e73cd265-119f-40a5-89d0-b22c755977e8
-plot(2mπ, 1.5) do m
+plot(2mπ, 1.5, title="T(ππ→ππ)") do m
 	abs2(amplitude(model.T, m)[1,1])
 end
 
@@ -225,7 +226,7 @@ begin
 	plot(layout=grid(5,1), size=(700,600), xlab="")
 	for i in 1:5
 		f = (@set model.αpoles[i] = 1.0)
-		plot!(sp=i, m->abs2(amplitude(f, m)[1]), 2mπ, 1.5)
+		plot!(m->abs2(amplitude(f, m)[1]), 2mπ, 1.5, sp=i, ylab="Pole[$i]")
 	end
 	plot!()
 end
