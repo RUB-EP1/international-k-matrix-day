@@ -1,14 +1,16 @@
+from glob import glob
 from pathlib import Path
 import shutil
 
 
-def copy_julia_html_page() -> list[str]:
-    html_page = Path("K-matrix.html")
-    if html_page.exists():
-        static_path = Path("_static")
+def copy_julia_html_page() -> None:
+    static_path = Path("_static")
+    julia_notebooks = glob("*.jl")
+    for notebook in julia_notebooks:
+        html_page = Path(notebook).with_suffix(".html")
+        if not html_page.exists():
+            continue
         shutil.copy(html_page, static_path / html_page)
-        return [str(static_path / html_page)]
-    return []
 
 
 BRANCH = "main"
