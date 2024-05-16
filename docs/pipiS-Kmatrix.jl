@@ -150,7 +150,7 @@ begin
 	function amplitude(K::Kmatrix, m)		
 	    pole_part = sum((gs * gs') ./ (M^2 - m^2) for (M, gs) in K.poles)
 		non_pole_part = (1-s0_scatt) / (m^2-s0_scatt) * K.nonpoles
-		fA0 = (1-sA0)/(m^2-sA0)*(m^2-sA0*mπ^2/2)
+		fA0 = (1-sA0)/(m^2-sA0)*(m^2-mπ^2/2)
 		(pole_part + non_pole_part) * fA0
 	end
 	# 
@@ -247,7 +247,7 @@ model = let
 	K = Kmatrix(MG, f_scatt)
 	T = Tmatrix(K, channels)
 	# 
-	ProductionAmplitude(T, SVector(0,0,0,0,0,0.0), SVector(0,0,0,0,0.0))
+	ProductionAmplitude(T, SVector(zeros(length(MG))...), SVector(0,0,0,0,0.0))
 end;
 
 # ╔═╡ 194a54b3-ea8f-4704-a2fe-6a6947f453da
@@ -271,11 +271,11 @@ let
 end
 
 # ╔═╡ f793c9ea-aa2b-4184-a228-bc5562fe4242
-begin
-	plot(layout=grid(6,1), size=(700,600), xlab="")
-	for i in 1:6
+let N = length(model.T.K.poles)
+	plot(layout=grid(N,1), size=(700,600), xlab="")
+	for i in 1:N
 		f = (@set model.αpoles[i] = 1.0)
-		plot!(s->abs2(amplitude(f, sqrt(s))[1]), 0.001, 12.0, sp=i, ylab="Pole[$i]")
+		plot!(s->abs2(amplitude(f, sqrt(s))[1]), 0.01, 12.0, sp=i, ylab="Pole[$i]")
 	end
 	plot!()
 end
