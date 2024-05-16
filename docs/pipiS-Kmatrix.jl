@@ -14,406 +14,85 @@ macro bind(def, element)
     end
 end
 
-# ╔═╡ 2a5d2458-9958-4c9b-a183-d7029b6360c9
-# ╠═╡ show_logs = false
+# ╔═╡ b38b74b5-04f0-4497-b66d-d47219fcbf2e
 begin
 	using StaticArrays
 	using Plots
 	using LaTeXStrings
 	using PlutoUI
 	using Parameters
+	using Setfield
 	using LinearAlgebra
 	using PlutoTeachingTools
 	using CalculusWithJulia
 end
 
-# ╔═╡ 9ade0bbc-0b04-4e6d-92cf-54062b638cfe
+# ╔═╡ 48ef77e4-ad88-49b6-83ab-06e949186782
+begin
+	const mπ = 0.13957
+	const mK = 0.49368
+	const mη = 0.54786 
+	const mη′ = 0.95778
+end;
+
+# ╔═╡ c9520a96-5001-4e1a-9b33-b370030e66dd
+begin
+	const s0_scatt = -3.92637
+	const s0_prod = -3.0
+	const m0sq = 1.0
+	const sA = 1.0
+	const sA0 = -0.15
+end;
+
+# ╔═╡ 9ca96d9a-f4ff-40bf-833f-995f8f39e271
 md"""
-# Practical K-Matrix Applications
+### Including $\chi_{c0}$ to the spectrum as pole 6
 
-## Introduction
-
-This educational material introduces the K-matrix formalism, focusing on its practical application in describing scattering amplitude observables. The K-matrix approach provides a robust framework for analyzing scattering processes, essential for understanding resonance phenomena in hadron physics. One of the main challenges in employing this formalism lies in the initial estimation of the bare parameters, which requires a thorough comprehension of the underlying principles and mechanics of the model.
-
-On the figure below one can find illustration of the ab->cd scattering process with resonance which has mass $m_{0}$ and width $Г_{0}$. This process can be described with K-matrix:
-
-$K_{ij} = \frac{g_i g_j}{m_0^2-s}$
-
-where $g_{i} g_j$ indicates different possible channels of the scattering process and $s=m^{2}$. K-matrix has to be real and symmetric by construction.
-
-Then, one can introduce transition T-matrix:
-
-$T = [I -i  K \rho]^{-1} K$
-where $I$ is identity matrix of three dimensions and $\rho$ being a diagonal matrix of phase space factors $\rho=Diag(\rho_i)$.
+$\Gamma \sim \frac{1}{2m}\bigg(
+|g_\text{other}|^2 \rho_{\text{other}}(s) +
+|g_{\pi\pi}|^2 \rho_{\pi\pi}(s)
+\bigg)$
 """
 
-# ╔═╡ 437d3bf9-cf44-40a8-97bc-8aee4b62d069
-RobustLocalResource("",	joinpath("..","figures","1x1_scattering.png"))
+# ╔═╡ b155df67-f198-41db-b7a3-d361a66feb07
+@bind gχc0_pipi Slider(0.058:0.001:0.3, show_value=true)
 
-# ╔═╡ e8ba4b4e-2d21-4bfe-bf32-02969f9b2970
+# ╔═╡ 49974f75-2d9a-4300-912b-9928b51816a7
+@bind gχc0_other Slider(0.058:0.001:0.6, show_value=true)
+
+# ╔═╡ a9a2a6a2-2b0c-4dcf-b4a1-2c35ca98b631
 md"""
-The provided examples are designed to facilitate this understanding by illustrating the connection between the K-matrix parameters and observable quantities.
-
-
-**Exapmle 1 (3x3 one pole):** The connection between the K-matrix and the multichannel Breit-Wigner model, demonstrating the generation of resonance widths.
-
-**Example 2 (2x2 two poles):** The analysis of a 2x2 problem highlighting the dynamics of weakly coupled resonances.
-
-**Example 3 (1x1 two poles):** The examination of a single-channel production amplitude involving two interfering resonances.
-
-These examples provide insights into estimating parameters, understanding resonance behavior, and interpreting observable phenomena within the K-matrix framework.
+### Cusp at low energy
+is related to the pseudothreshold of $\eta\eta'$. One finds that the phase space function is real again below the pseudothreshold.
 """
 
-# ╔═╡ cb9fdca3-db42-4501-a2fe-c3ff099b2d83
-TableOfContents()
-
-# ╔═╡ a4750e66-b448-479e-a5dd-b9aec0f3a857
-aside(RobustLocalResource("",	joinpath("..","figures","3x3_scattering.png")))
-
-# ╔═╡ c2a0a8bc-c1e6-4a48-91dc-590ca79383ff
-md"""
-## Example 1: Multichannel Breit-Wigner Model and Resonance Widths
-
-The first example explains the relationship between the K-matrix and the multichannel Breit-Wigner (BW) model. It demonstrates how resonance widths are generated within this framework, offering insight into the dynamic nature of resonances. This example is pivotal for appreciating how the K-matrix formalism can be used to describe complex resonance structures in multichannel scattering processes.
-"""
-
-# ╔═╡ 798f53e9-d871-42d1-a81c-d35adc7ece21
-md"""
-### Setup
-
-Let's consider 3 coupled channels, the scattering amplitude T is a 3x3 matrix:
-
-$T = \begin{pmatrix}
-T_{1\to1} & T_{1\to2} & T_{1\to3}\\
-T_{2\to1} & T_{2\to2} & T_{2\to3}\\
-T_{3\to1} & T_{3\to2} & T_{3\to3}\\
-\end{pmatrix}$
-
-We model it with the simplest **one-pole** K-matrix.
-
-$K = \frac{1}{m_0^2-s}
-\begin{pmatrix}
-g_1^2 & g_1 g_2 & g_1 g_3\\
-g_2 g_1 & g_2^2 & g_2 g_3\\
-g_3 g_1 & g_3 g_2 & g_3^2\\
-\end{pmatrix}$ 
-
-and $\rho=\text{Diag}(\rho_1,\rho_2,\rho_3)$
-"""
-
-# ╔═╡ 1215bc85-4760-473b-93d0-5d6a8952e27e
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E1.Q1:** When $K$ is degenerate and has rank 1, the expression for T is simple. Figure it out for 3x3 matrix.
-
-**Advanced option:** Can you prove it for general case?
-"""]))
-
-# ╔═╡ 7b717c8f-1fb8-4892-a250-c77e5e088445
-aside(Markdown.MD(Markdown.Admonition("warning", "Tip", [md"$T = [1-iK\rho]^{-1}K$"])))
-
-# ╔═╡ 1273bd41-9986-4b9f-9e06-b3bed7ab65f0
-answer_box(
-md"$T_{ij} = \frac{g_i g_j}{m_0^2-s-ig_1^2 \rho_1-ig_2^2 \rho_2-ig_3^2 \rho_3}$
-
-This is expression known as the [Flatte formula](https://inspirehep.net/literature/108884)
-")
-
-# ╔═╡ 6d5acd0c-dbcf-4d0a-a94c-76ac59006fc8
-md"""
-
-### Comparison to Breit-Wigner
-
-Let's compare to the BW parametrization
-
-$\text{BW} = \frac{m_0\Gamma_0}{m_0^2-s-im_0 \Gamma_0}$
-
-"""
-
-# ╔═╡ fe35af83-4910-48e4-b9de-5b8a1f85fb72
-md"""
-Cross section of certain channel calculated as 
-
-$\frac{\mathrm{d}\sigma}{\mathrm{d}m} = \frac{1}{J_i} |T_{ij}|^2 \frac{\mathrm{d}\Phi_j}{\mathrm{d}m}$
-
-with
-- the flux $J_i$ set to 1, and
-- the $\mathrm{d}\Phi_j / \mathrm{d}m = 2m\rho_j$ is a phase space per certain energy, and
-- the $\rho_j$ is zero below the threshold of the j channel.
-"""
-
-# ╔═╡ 3fde6651-a704-4757-b282-3a7cfcd36f6e
-md"""
-Let's setup couplings for three channels, that we can adjust:
-- g₁ = $(@bind g1_T1 Slider(range(0,4,101), default=1.2, show_value=true)) GeV for the first channel,
-- g₂ = $(@bind g2_T1 Slider(range(0,4,101), default=0.5, show_value=true)) GeV for the second channel, and 
-- g₃ = $(@bind g3_T1 Slider(range(0,4,101), default=1.6, show_value=true)) GeV for the third channel.
-- m₀ = $(@bind M Slider(range(0,10,101), default=5.3, show_value=true)) GeV/c² pole of the K-matrix.
-"""
-
-# ╔═╡ 59ceb096-1cc0-4c69-b56f-476710dd698e
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E1.Q2:** Which parameter is needed to be changed in order to see difference between BW and K-matrix formalism?
-"""]))
-
-# ╔═╡ 1410b82a-0017-4ef3-adf8-1f4da66393a4
-answer_box(
-md" $g_{2}$ and $g_{3}$
-")
-
-# ╔═╡ ad74e82b-b2f4-4b8d-99ea-2fe295bb018d
-md"""
-### Calculation of the width
-
-We can relate the approximate width to coupling using the Breit-Wigner expression, $1/(m_0^2-s-im_0\Gamma_0)$, where $\Gamma_0$ gives the width of the peak.
-Hence
-
-```math
-\begin{align}
-\Gamma_0 = \frac{g_1^2 \rho_1 (m_0) + g_2^2 \rho_2(m_0)+g_3^2 \rho_3(m_0)}{m_0}\\
-\end{align}
-```
-"""
-
-# ╔═╡ cf9bf7ac-905f-4112-a7f4-36c536d33918
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E1.Q3:** Let's assume that we know cross-section distribution and can measure FWHM of it. How is it possible to estimate K-matrix parameters $g_{i}$?
-"""]))
-
-# ╔═╡ 87fc0818-273b-4d0b-814a-058365ee07a0
-answer_box(
-md" $g_{i}\approx\sqrt\frac{Г_{0}m_{0}}{\rho_{i}(m_0)}$
-")
-
-# ╔═╡ 915f987d-9bb5-4e0b-9cf0-f52e3937695a
-md"""
-## Example 2: The 2x2 Problem with Weakly Coupled Resonances
-
-In the second example, we explore the 2x2 problem, focusing on scenarios with weakly coupled resonances. This case study sheds light on the interactions between resonances in a two-dimensional parameter space, emphasizing the effects of weak coupling. It is an essential exploration for understanding how resonance coupling influences scattering amplitudes and observable resonance characteristics.
-"""
-
-# ╔═╡ 2486eb34-a858-4ea9-99e1-f17627589461
-RobustLocalResource("",	joinpath("..","figures","2x2_scattering.png"))
-
-# ╔═╡ 1663348b-ed67-4851-9365-9641e6379fcd
-md"""
-
-The K-matrix for such case consists of two terms:
-
-$K =K^{(1)}+K^{(2)}
-= \frac{1}{m_{(1)}^2-s}
-\begin{pmatrix}
-g_1^2 & g_1 g_2\\
-g_2 g_1 & g_2^2
-\end{pmatrix} + 
-\frac{1}{m_{(2)}^2-s}
-\begin{pmatrix}
-h_1^2 & h_1 h_2\\
-h_2 h_1 & h_2^2
-\end{pmatrix}$
-"""
-
-# ╔═╡ 74e06991-79a2-4711-8bc7-c8656249641f
-md"""
-### The case of not coupled resonances
-"""
-
-# ╔═╡ c7e615fa-62aa-4de2-8ef4-2df8534b2c06
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E2.Q1:** Let's start with setting off-diagonal parameters described coupling to zeros $g_{2}=h_{1}=0$. Then K-matrix would be What would be 
-
-$K =
-\begin{pmatrix}
-\frac{g_1^2}{m_{(1)}^2-s} & 0\\
-0 & \frac{h_2^2}{m_{(2)}^2-s}
-\end{pmatrix}$
-
-How will the T-matrix look like?
-"""]))
-
-# ╔═╡ a223cbff-88b0-4a28-af53-c139e7b9108a
-Markdown.MD(Markdown.Admonition("warning", "Tip", [md"For single resonance:
-
-$T =
-\frac{1}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2}
-\begin{pmatrix}
-g_1^2 & g_1g_2\\
-g_2g_1 & g_2^2
-\end{pmatrix}$
-
-"]))
-
-# ╔═╡ 9d9a89ed-76f3-4e76-a3cc-0d33c747fbb5
-answer_box(md"""
-In that case, the T-matrix would be simply:
-
-$T =
-\begin{pmatrix}
-\frac{g_1^2}{m_{(1)}^2-s-ig_1^2\rho_1} & 0\\
-0 & \frac{h_2^2}{m_{(2)}^2-s-ih_2^2\rho_2}
-\end{pmatrix}$
-""")
-
-# ╔═╡ 729c86ab-cf81-48bf-82be-b89cf28eaee6
-md"""
-
-### Demonstration
-
-- g₂ = $(@bind g2_T2 Slider(range(-1,3,81), default=0.0, show_value=true)) GeV for the first channel,
-- h₁ = $(@bind h1_T2 Slider(range(-1,3,81), default=0.0, show_value=true)) GeV for the second channel, and 
-"""
-
-# ╔═╡ 0f2ade1e-6958-4ebd-942a-c844bf3dbb99
-md"""
-### The case of weak coupling for one of the resonances
-"""
-
-# ╔═╡ a7a68629-bf6f-435e-9a97-de9a02a31160
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E2.Q2:** Let's find the first expansion term to reflect on how a weakly coupled resonances show up in the second channel. For that put $g_2=\epsilon$, $h_1 = 0$.
-
-Then,
-
-$K^{(1)} = \frac{1}{m_{(1)}^2-s}
-\begin{pmatrix}
-g_1^2 & g_1 \epsilon\\
-\epsilon g_1 & \epsilon^2
-\end{pmatrix}
-\approx \frac{1}{m_{(1)}^2-s}
-\begin{pmatrix}
-g_1^2 & g_1 \epsilon\\
-\epsilon g_1 & 0
-\end{pmatrix}$
-
-In this case the T-matrix will become:
-"""]))
-
-# ╔═╡ a1558b96-576f-4661-b357-c9f036c0167d
-answer_box(md"""
-The T-matrix in that case would be:
-
-$T \approx
-\begin{pmatrix}
-\frac{g_1^2}{m_{(1)}^2-s-ig_1^2\rho_1} & \frac{g_1\epsilon}{m_{(1)}^2-s-ig_1^2\rho_1}\\
-\frac{\epsilon g_1}{m_{(1)}^2-s-ig_1^2\rho_1} & \frac{h_2^2}{m_{(2)}^2-s-ih_2^2\rho_2}
-\end{pmatrix}$
-
-One can notice that:
-
-(1) $T^{(0)}_{11}=T^{(\epsilon)}_{11}$ and $T^{(0)}_{22}=T^{(\epsilon)}_{22}$
-
-(2) $\frac{T^{(\epsilon)}_{12}}{T^{(\epsilon)}_{11}}=\frac{\epsilon}{g_{1}}$
-
-(here $T^{(0)}$ and $T^{(\epsilon)}$ indicate previous and this case respectively)
-
-Hence one will see effects of channel couplings only when $g_{2}$ will be in order of $g_{1}$
-
-""")
-
-# ╔═╡ fff6f9f5-b002-46ea-b6ff-1ecf32357ea9
-md"""
-### The case of weak coupling for both resonances
-"""
-
-# ╔═╡ 8b53b1cc-520b-48e4-b2b1-6ad6ebe443e2
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E2.Q3:** Let's , finally, put $g_2=h_1=\epsilon$.
-
-What will we see for the off-diagonal terms of T-matrix?
-
-"""]))
-
-# ╔═╡ 1e7ebcaf-dd83-40fb-9bd8-2e48a1911bfa
-answer_box(md"""
-
-$T_{12}=T_{21}=\frac{g_1\epsilon}{m_{(1)}^2-s-ig_1^2\rho_1}+\frac{h_2\epsilon}{m_{(2)}^2-s-ih_2^2\rho_2}=(BW_{g_{1}}+BW_{h_{2}})\epsilon$
-
-""")
-
-# ╔═╡ 0e899f67-adec-4837-9993-c9fe22f788d1
-md"""
-## Example 3: Single-Channel Production Amplitude with Interfering Resonances
-
-The third example examines a single-channel problem featuring two prominent resonances. The focus is on the production amplitude and the investigation of interference effects between resonances. This scenario is critical for comprehending how overlapping resonances interact within the K-matrix formalism, affecting the overall scattering amplitude and observable patterns in the data.
-"""
-
-# ╔═╡ 27f0ae17-b61c-49c5-b4fc-6de5d2ddda94
-md"""
-### Scattering amplitude
-"""
-
-# ╔═╡ 8b92df7f-d97b-43fa-8ac3-fed8ee974f5f
-md"""
-For this case K-matrix will become just a function of s:
-
-$K = \frac{g^2}{m_{(1)}^2-s}+
-\frac{h^2}{m_{(2)}^2-s}$
-
-$T = [1-iK\rho ]^{-1} K$
-
-If K is zero for $s=s_\text{z}$, T is zero.
-"""
-
-# ╔═╡ edef417d-b0e4-4cad-bf63-462a8d7e861f
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E3.Q1:** Why does it have zero between the poles?
-"""]))
-
-# ╔═╡ 53ad2e4e-0268-4488-9891-815922d8a8db
-aside(Markdown.MD(Markdown.Admonition("warning", "Tip", [md"For explanation let's have a look at K-matrix in these case."])))
-
-# ╔═╡ 91db142a-109f-414a-8d2c-9d3cd92bae40
-md"""
-### Production amplitude
-
-The difference between production and scattering is that now one replace K-matrix with vector:
-
-$A = [1-iK\rho]^{-1}
-\begin{pmatrix}
-\frac{\alpha_1 g}{m_{(1)}^2-s}\\
-\frac{\alpha_2 h}{m_{(2)}^2-s}
-\end{pmatrix}$
-
-Where $a_1$ and $a_2$ are production factors which might be complex.
-"""
-
-# ╔═╡ 12a615bb-97b8-4fde-bd66-ac7083970e0e
-RobustLocalResource("", joinpath("..","figures", "1x1_production.png"), cache=false)
-
-# ╔═╡ f9dad52e-d6a2-46c4-a5b3-91a50c9425c1
-md"""
-Production couplings
-- α₁ = $(@bind α1_E3 Slider(range(0.01,2,61), default=1.0, show_value=true))
-- |α₂| = $(@bind α2_E3 Slider(range(-1,2,61), default=1.0, show_value=true))
-- Arg(α₂) = $(@bind ϕ2_E3 Slider(range(0,2π,100), default=0.0, show_value=true))
-"""
-
-# ╔═╡ cf9733b3-bdc9-4e58-a7f3-87845eb907da
-Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
-**E3.Q2:** What can the complexity of a production factor lead to? 
-How the plot above will change?
-"""]))
-
-# ╔═╡ 3019d77e-a41e-4fa5-a0bf-b91d3d72e96f
+# ╔═╡ 4f80b018-f810-11ee-141e-1be227dfce41
 md"""
 ## Implementation
 """
 
-# ╔═╡ 25758574-5da4-4fbe-946d-d55f6210b7e2
+# ╔═╡ a6bd3b5d-bf41-4509-b031-886a2ada960a
 theme(:wong2, frame=:box, grid=false, minorticks=true,
     guidefontvalign=:top, guidefonthalign=:right,
     foreground_color_legend=nothing,
     xlim=(:auto, :auto), ylim=(:auto, :auto),
 	lab="", xlab="Mass of system [GeV]")
 
-# ╔═╡ ae68a0e2-46ce-4186-97b3-4b03b5f2d8ce
+# ╔═╡ 7bc54d35-57db-440c-a7d1-5c259a4f33be
+md"""
+### Phase space
+"""
+
+# ╔═╡ 57674d38-b2b3-4586-a94b-28f61b711e10
 begin
-	struct TwoBodyChannel
+	abstract type AbstractChannel end
+	struct TwoBodyChannel <: AbstractChannel
 	    m1::Complex{Float64}
 	    m2::Complex{Float64}
 	    L::Int
 	end
 	TwoBodyChannel(m1, m2; L::Int=0) = TwoBodyChannel(m1, m2, L)
-	# 
+	#
 	function ρ(ch::TwoBodyChannel, m; ϕ=-π / 2)
 	    ch.L != 0 && error("not implemented")
 	    sqrt(cis(ϕ) * (m - (ch.m1 + ch.m2))) * cis(-ϕ / 2) *
@@ -423,30 +102,76 @@ begin
 	end
 end
 
-# ╔═╡ 0360447c-c6c7-4ba6-8e5f-a20d5797995b
+# ╔═╡ 33089a05-217f-4f03-873c-2846cf9db2c9
+md"""
+`RhoRho` is merged between <1GeV and above in absolutely terrible and unacceptable way
+"""
+
+# ╔═╡ ab4537ae-b700-4c1e-9bd6-de053b49edbe
+begin
+	struct RhoRho <: AbstractChannel end
+	function ρ(ch::RhoRho, m::Real; ϕ=-π / 2)
+		s = m^2 
+		s > 1.0 ? sqrt(1-16mπ^2/s) :
+			1.0789s^6 + 0.1366s^5 − 0.2974s^4 − 0.2084s^3 + 0.1385s^2 − 0.0193s + 0.0005
+	end
+end
+
+# ╔═╡ 4d31c24a-b9ec-4dbe-8fdc-22c62d8ec3b6
+plot(m->ρ(RhoRho(), m), 0.3, 3)
+
+# ╔═╡ 50635ca3-242f-44f5-9cb2-3993da1fa835
+md"""
+### K-matrix
+"""
+
+# ╔═╡ bc99b07e-0342-4206-acc5-5a71330a80eb
+md"""
+$\hat{K}_{ij}(s) = \left(\sum \frac{g_i^\alpha g_j^\alpha}{m_\alpha^2-s} + f_{ij} \frac{m_0^2-s_0^\text{scatt}}{s-s_0^\text{scatt}}\right) f_{A0}(s)\,, \quad
+f_{A0}(s) = \frac{1-s_{A0}}{s-s_{A0}} \left(s-s_{A0}\frac{m_\pi^2}{2}\right)$
+"""
+
+# ╔═╡ c98d1106-3a79-4377-922b-8b73956be2ab
 begin
 	struct Kmatrix{N,V}
 	    poles::SVector{V,NamedTuple{(:M, :gs),Tuple{Float64,SVector{N,Float64}}}}
 	    nonpoles::SMatrix{N,N,Float64}
 	end
-	function Kmatrix(_poles)
+	function Kmatrix(_poles, _nonpoles = 
+				fill(0.0, (length(first(_poles).gs), length(first(_poles).gs))))
 		V, N = length(_poles), length(first(_poles).gs)
 		poles = map(_poles) do p
 			(; M=p.M, gs=SVector{N}(p.gs))
 		end |> SVector{V}
-		nonpoles = SMatrix{N,N}(fill(0.0, (N,N)))
+		nonpoles = SMatrix{N,N}(_nonpoles)
 		return Kmatrix(poles, nonpoles)
 	end
 	#
-	amplitude(K::Kmatrix, m) =
-	    sum((gs * gs') ./ (M^2 - m^2) for (M, gs) in K.poles) + K.nonpoles
+	function amplitude(K::Kmatrix, m)		
+	    pole_part = sum((gs * gs') ./ (M^2 - m^2) for (M, gs) in K.poles)
+		non_pole_part = (1-s0_scatt) / (m^2-s0_scatt) * K.nonpoles
+		fA0 = (1-sA0)/(m^2-sA0)*(m^2-mπ^2/2)
+		(pole_part + non_pole_part) * fA0
+	end
 	# 
 	npoles(X::Kmatrix{N,V}) where {N,V} = V
 	nchannels(X::Kmatrix{N,V}) where {N,V} = N
 	#
-end
+end;
 
-# ╔═╡ fb45f5a8-15c4-4695-b36b-f21aab1e3d80
+# ╔═╡ c9d89e6e-649b-4d6a-9bcd-3838c2a11e23
+md"""
+$T = [1-i\hat{K}\rho]^{-1}\hat{K}$
+"""
+
+# ╔═╡ 91daa86b-6b44-4824-84f7-f874fa819391
+md"""
+$F = [1-i\hat{K}\rho]^{-1}\hat{P}\,,
+\qquad
+\hat{P}_v = \sum_\alpha \frac{\beta_\alpha g_v^\alpha}{m_α^2-s} + \frac{m_0^2-s_0^\text{prod}}{s-s_0^\text{prod}} f_v^\text{prod}$
+"""
+
+# ╔═╡ 6f819dd6-1a62-430a-bd6d-5544cd1fc016
 begin
 	struct ProductionAmplitude{N,V}
 	    T::Tmatrix{N,V}
@@ -464,7 +189,7 @@ begin
 	# 
 	function amplitude(A::ProductionAmplitude, m; ϕ=-π / 2)
 	    @unpack T, αpoles, αnonpoles = A
-	    P = αnonpoles
+	    P = αnonpoles * (m0sq-s0_prod) / (m^2-s0_prod)
 	    for (α, Mgs) in zip(αpoles, A.T.K.poles)
 	        @unpack M, gs = Mgs
 	        P += α .* gs ./ (M^2 - m^2)
@@ -472,13 +197,13 @@ begin
 	    D⁻¹ = inv(Dmatrix(T, m; ϕ))
 	    return D⁻¹ * P
 	end
-end
+end;
 
-# ╔═╡ 1072afe6-bad7-4de3-9ad2-6dcef2b924bb
+# ╔═╡ c8391608-efe9-48a5-8cdb-f58bcc37b63b
 begin
-	struct Tmatrix{N,V}
+	struct Tmatrix{N,V,X}
 	    K::Kmatrix{N,V}
-	    channels::SVector{N,TwoBodyChannel}
+	    channels::SVector{N,X}
 	end
 	#	
 	function Dmatrix(T::Tmatrix{N,V}, m; ϕ=-π / 2) where {N,V}
@@ -493,193 +218,70 @@ begin
 	npoles(X::Tmatrix{N,V}) where {N,V} = V
 	nchannels(X::Tmatrix{N,V}) where {N,V} = N
 	channels(X::Tmatrix) = X.channels
-end
-
-# ╔═╡ 0ff7e560-37ca-4016-bc01-741322402679
-T1 = let
-	# thhree channels
-	channels = SVector(
-			TwoBodyChannel(1.1, 1.1),
-	        TwoBodyChannel(2.2, 2.2),
-	        TwoBodyChannel(1.3, 1.3))
-	# one bare pole
-	MG = [(M, gs=[g1_T1, g2_T1, g3_T1])]
-	# 
-	K = Kmatrix(MG)
-	T = Tmatrix(K, channels)
 end;
 
-# ╔═╡ ce2c280e-6a55-4766-a0f9-941b448c41c9
-begin
-	Γv_T1 = map(zip(T1.K.poles[1].gs, T1.channels)) do (g, ch)
-		m0 = T1.K.poles[1].M
-		Γi = g^2*ρ(ch, m0) / m0
-		round(Γi, digits=2)
-	end |> real
-	Markdown.parse("The sum: $(round(sum(Γv_T1), digits=2)) GeV = $(join(string.(Γv_T1), " + ")*" GeV"), that corresponds to $(join(string.(round.(100*Γv_T1./sum(Γv_T1), digits=1)) .*"%", ", ")), respectively.")
-end
-
-# ╔═╡ a6fd628c-86db-4d3f-836b-ff376cac7f1d
-T2 = let
-	# two channels
+# ╔═╡ fe359958-cafc-4916-9d34-013dc955746a
+model = let
+	# five channels
 	channels = SVector(
-			TwoBodyChannel(1.1, 1.1),
-	        TwoBodyChannel(1.3, 1.3))
-	# two bare pole
-	g1_T2 = 2.1
-	h2_T2 = 2.5
+			TwoBodyChannel(mπ, mπ), # ππ
+			TwoBodyChannel(mK, mK), # KK
+			RhoRho(), # 4π
+			TwoBodyChannel(mη, mη), # ηη
+	        TwoBodyChannel(mη, mη′)) # ηη′
+	# five bare pole
 	MG = [
-		(M=4.3, gs=[g1_T2, g2_T2]),
-		(M=6.3, gs=[h1_T2, h2_T2])]
+		(M=0.65100, gs = [0.22889, -0.55377,  0.00000, -0.39899, -0.34639]),
+		(M=1.20360, gs = [0.94128,  0.55095,  0.00000,  0.39065,  0.31503]),
+		(M=1.55817, gs = [0.36856,  0.23888,  0.55639,  0.18340,  0.18681]),
+		(M=1.21000, gs = [0.33650,  0.40907,  0.85679,  0.19906, -0.00984]),
+		(M=1.82206, gs = [0.18171, -0.17558, -0.79658, -0.00355,  0.22358]),
+		(M=3.2, gs = [gχc0_pipi, -0.0, -0.0, -0.0,  gχc0_other])
+	]
+	# slowly varying term
+	f_scatt = [
+		0.23399 0.15044 -0.20545 0.32825 0.35412
+		fill(0,(4,5))
+	] |> Symmetric
 	# 
-	K = Kmatrix(MG)
+	K = Kmatrix(MG, f_scatt)
 	T = Tmatrix(K, channels)
-end;
-
-# ╔═╡ fbfc0e6c-775e-4025-ad06-e3f6e291ec52
-let
-	plot(title=["Scattering cross section" ""], yaxis=nothing,
-		layout=grid(2,1, heights=(0.5,0.5)), size=(700,500))
-	plot!(2.6, 8, sp=1, lab="Tₖ[1,1]") do e
-		A = amplitude(T2, e)[1,1]
-		phsp = real(ρ(T2.channels[1], e)) * e
-		abs2(A) * phsp
-	end
-	vline!(sp=1, [T2.K.poles[1].M])
-	plot!(2.6, 8, sp=2, lab="Tₖ[2,2]") do e
-		A = amplitude(T2, e)[2,2]
-		phsp = real(ρ(T2.channels[1], e)) * e
-		abs2(A) * phsp
-	end
-	vline!(sp=2, [T2.K.poles[2].M])
-	plot!(2.6, 8, sp=2, lab="Tₖ[1,2]") do e
-		A = amplitude(T2, e)[1,2]
-		phsp = real(ρ(T2.channels[1], e)) * e
-		abs2(A) * phsp
-		abs2(A) * phsp
-	end
-end
-
-# ╔═╡ babfbc1f-7beb-44d1-b3c8-75309e8b817c
-T3 = let
-	# one channels
-	channels = SVector(
-			TwoBodyChannel(1.1, 1.1))
-	# two bare pole
-	MG = [
-		(M=4.3, gs=[2.1]),
-		(M=6.3, gs=[2.5])]
 	# 
-	K = Kmatrix(MG)
-	T = Tmatrix(K, channels)
+	ProductionAmplitude(T, SVector(zeros(length(MG))...), SVector(0,0,0,0,0.0))
 end;
 
-# ╔═╡ 8556c8f4-89e4-4544-ad73-4da8b43a7051
-p = let
-	f1(x)=1/(T3.K.poles[1].M-x)
-	f2(x)=1/(T3.K.poles[2].M-x)
-	f3(x)=f1(x)+f2(x)
-	plot(title="K-matrix parameter")
-	plot!(rangeclamp(f1), 3, 7, lab="First pole, K1")
-	plot!(rangeclamp(f2), 3, 7, lab="Second pole, K2")
-	plot!(rangeclamp(f3), 3, 7, lab="Total")
-	vline!([T3.K.poles[1].M, T3.K.poles[2].M], linestyle=:dash)
-	hline!([0], color=:black, size=(400,300), leg=:top)
-end;
-
-# ╔═╡ e9c0d423-793d-4997-a0fd-5c67b41fffb2
-answer_box(
-TwoColumn(md"There are two poles because of which both K-matrix have asymptotics which interfere and results in 0 between them", plot(p))
-)
-
-# ╔═╡ ff61d6e1-5681-4d15-8164-62baee4613ba
-A_E3 = ProductionAmplitude(T3, SVector{2}(α1_E3, α2_E3*cis(ϕ2_E3)), SVector{1}(0));
-
-# ╔═╡ 7b4fa73c-1075-4271-8d2f-1668d98904ab
-let
-	plot(title="Scattering cross section", yaxis=nothing)
-	plot!(2.6, 8, lab="Tₖ") do e
-		A = amplitude(T3, e)[1,1]
-		phsp = real(ρ(T3.channels[1], e)) * e
-		abs2(A) * phsp
-	end
-	vline!([T3.K.poles[1].M, T3.K.poles[2].M])
-end
-
-# ╔═╡ ebf8b842-99ce-40e8-9bf4-931471879bf9
-function productionpole(T::Tmatrix, m, iR::Int; ϕ=-π / 2)
-    @unpack M, gs = T.K.poles[iR]
-    P = gs ./ (M^2 - m^2)
-    return inv(Dmatrix(T, m; ϕ)) * P
-end
-
-# ╔═╡ 9a2e8210-c140-4689-bb16-2aab3c3b2aaa
-productionnonpole(T::Tmatrix{N,K}, m; ϕ=-π / 2) where {N,K} =
-    inv(Dmatrix(T, m; ϕ)) * ones(N)
-#
-
-# ╔═╡ 474e5d19-b537-42d2-9e92-2a26996cee2d
-const iϵ = 1e-7im
-
-# ╔═╡ 3e76dfec-e83c-46df-8838-b299a7aaa5e3
-let
-	m0 = T1.K.poles[1].M
-	plot(title="Scattering cross section 1 → 1", yaxis=nothing)
-	# K-matrix
-	plot!(2.6, 8, lab="Tₖ[1,1]") do e
-		A = amplitude(T1, e)[1,1]
-		phsp = real(ρ(T1.channels[1], e)) * e
-		abs2(A) * phsp
-	end
-	vline!([m0], lab="m₀ (K-matrix pole)")
-	# BW
-	N_peak = abs2(amplitude(T1, m0+iϵ)[1,1])
-	plot!(2.6, 8, lab="BW") do e
-		Γ0=sum(Γv_T1)
-		A = m0*Γ0/(m0^2-e^2-1im*m0*Γ0)
-		phsp = real(ρ(T1.channels[1], e)) * e
-		N_peak * abs2(A) * phsp
-	end
-	vline!(map(T1.channels) do ch
-		real(ch.m1+ch.m2)
-	end, lab="thresholds", ls=:dash)
-end
-
-# ╔═╡ 35b9a451-5fac-46e2-97bb-ebc19d4b3418
-function productionpole(A::ProductionAmplitude{N,V}, m, iR::Int; ϕ=-π / 2) where {N,V}
-    αnonpoles = SVector{N}(zeros(N))
-    αpoles = zeros(Complex{Float64}, V)
-    αpoles[iR] = A.αpoles[iR]
-    A = ProductionAmplitude(A.T, SVector{V}(αpoles), αnonpoles)
-    return amplitude(A, m; ϕ)
-end
-
-# ╔═╡ b90a1c10-8e57-4b2a-b48a-ccb78010a4f5
+# ╔═╡ 194a54b3-ea8f-4704-a2fe-6a6947f453da
 let
 	plot()
-	plot!(title="Production cross section", 2.6, 8, sp=1, lab="Total production", yaxis=nothing) do e
-		A = amplitude(A_E3, e)[1]
-		phsp = real(ρ(T3.channels[1], e)) * e
-		abs2(A) * phsp
+	map(model.T.channels) do ch
+		ch isa TwoBodyChannel && plot!(Base.Fix1(real ∘ ρ, ch), 2mπ, 2.2)
 	end
-	map([1,2]) do ind
-		plot!(2.6, 8, sp=1, fill=0, alpha=0.2, lab="from R$(ind)") do e
-			A = productionpole(A_E3, e, ind)[1]
-			phsp = real(ρ(T3.channels[1], e)) * e
-			abs2(A) * phsp
-		end
-	end
-	vline!([T3.K.poles[1].M, T3.K.poles[2].M])
 	plot!()
 end
 
-# ╔═╡ 2aef1bd5-7a81-417b-a090-77644fc5f640
-function productionnonpole(A::ProductionAmplitude{N,V}, m; ϕ=-π / 2) where {N,V}
-    @unpack T, αnonpoles = A
-    αpoles = SVector{V}(zeros(V))
-    A = ProductionAmplitude(T, αpoles, αnonpoles)
-    return amplitude(A, m; ϕ)
+# ╔═╡ e73cd265-119f-40a5-89d0-b22c755977e8
+let
+	plot(2mπ, 3.6, title="T(ππ→ππ)") do m
+		abs2(amplitude(model.T, m)[1,1])
+	end
+	map(model.T.channels) do ch
+		ch isa TwoBodyChannel && vline!([real(ch.m1+ch.m2)])
+	end
+	plot!()
 end
+
+# ╔═╡ f793c9ea-aa2b-4184-a228-bc5562fe4242
+let N = length(model.T.K.poles)
+	plot(layout=grid(N,1), size=(700,600), xlab="")
+	for i in 1:N
+		f = (@set model.αpoles[i] = 1.0)
+		plot!(s->abs2(amplitude(f, sqrt(s))[1]), 0.01, 12.0, sp=i, ylab="Pole[$i]")
+	end
+	plot!()
+end
+
+# ╔═╡ 4d2dc03e-3b0f-4cdd-82fe-64a5e89b6c91
+const iϵ = 1e-7im
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
@@ -691,15 +293,17 @@ Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
 PlutoTeachingTools = "661c6b06-c737-4d37-b85c-46df65de6f69"
 PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+Setfield = "efcf1570-3423-57d1-acb7-fd33fddbac46"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
 CalculusWithJulia = "~0.1.4"
 LaTeXStrings = "~1.3.1"
 Parameters = "~0.12.3"
-Plots = "~1.39.0"
+Plots = "~1.40.3"
 PlutoTeachingTools = "~0.2.14"
 PlutoUI = "~0.7.58"
+Setfield = "~1.1.1"
 StaticArrays = "~1.9.3"
 """
 
@@ -709,13 +313,13 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.10.2"
 manifest_format = "2.0"
-project_hash = "6ae51dbecc45796d31d4f3f87590513ec17217d5"
+project_hash = "cf280c24497579eedea34637b5fddf55233ab522"
 
 [[deps.AbstractPlutoDingetjes]]
 deps = ["Pkg"]
-git-tree-sha1 = "0f748c81756f2e5e6854298f11ad8b2dfae6911a"
+git-tree-sha1 = "6e1d2a35f2f90a4bc7c2ed98079b2ba09c35b83a"
 uuid = "6e696c72-6542-2067-7265-42206c756150"
-version = "1.3.0"
+version = "1.3.2"
 
 [[deps.Accessors]]
 deps = ["CompositionsBase", "ConstructionBase", "Dates", "InverseFunctions", "LinearAlgebra", "MacroTools", "Markdown", "Test"]
@@ -761,9 +365,9 @@ version = "1.0.8+1"
 
 [[deps.Cairo_jll]]
 deps = ["Artifacts", "Bzip2_jll", "CompilerSupportLibraries_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "JLLWrappers", "LZO_jll", "Libdl", "Pixman_jll", "Xorg_libXext_jll", "Xorg_libXrender_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "a4c43f59baa34011e303e76f5c8c91bf58415aaf"
+git-tree-sha1 = "a2f1c8c668c8e3cb4cca4e57a8efdb09067bb3fd"
 uuid = "83423d85-b0ee-5818-9007-b63ccbeb887a"
-version = "1.18.0+1"
+version = "1.18.0+2"
 
 [[deps.CalculusWithJulia]]
 deps = ["Base64", "Contour", "ForwardDiff", "HCubature", "IntervalSets", "JSON", "LinearAlgebra", "PlotUtils", "Random", "RecipesBase", "Reexport", "Requires", "Roots", "SpecialFunctions", "SplitApplyCombine", "Test"]
@@ -795,15 +399,15 @@ version = "0.7.4"
 
 [[deps.ColorSchemes]]
 deps = ["ColorTypes", "ColorVectorSpace", "Colors", "FixedPointNumbers", "PrecompileTools", "Random"]
-git-tree-sha1 = "67c1f244b991cad9b0aa4b7540fb758c2488b129"
+git-tree-sha1 = "4b270d6465eb21ae89b732182c20dc165f8bf9f2"
 uuid = "35d6a980-a343-548e-a6ea-1d62b119f2f4"
-version = "3.24.0"
+version = "3.25.0"
 
 [[deps.ColorTypes]]
 deps = ["FixedPointNumbers", "Random"]
-git-tree-sha1 = "eb7f0f8307f71fac7c606984ea5fb2817275d6e4"
+git-tree-sha1 = "b10d0b65641d57b8b4d5e234446582de5047050d"
 uuid = "3da002f7-5984-5a60-b8a6-cbb66c0b333f"
-version = "0.11.4"
+version = "0.11.5"
 
 [[deps.ColorVectorSpace]]
 deps = ["ColorTypes", "FixedPointNumbers", "LinearAlgebra", "Requires", "Statistics", "TensorCore"]
@@ -817,9 +421,9 @@ weakdeps = ["SpecialFunctions"]
 
 [[deps.Colors]]
 deps = ["ColorTypes", "FixedPointNumbers", "Reexport"]
-git-tree-sha1 = "fc08e5930ee9a4e03f84bfb5211cb54e7769758a"
+git-tree-sha1 = "362a287c3aa50601b0bc359053d5c2468f0e7ce0"
 uuid = "5ae59095-9a9b-59fe-a467-6f913c188581"
-version = "0.12.10"
+version = "0.12.11"
 
 [[deps.Combinatorics]]
 git-tree-sha1 = "08c8b6831dc00bfea825826be0bc8336fc369860"
@@ -839,9 +443,9 @@ version = "0.3.0"
 
 [[deps.Compat]]
 deps = ["TOML", "UUIDs"]
-git-tree-sha1 = "c955881e3c981181362ae4088b35995446298b80"
+git-tree-sha1 = "b1c55339b7c6c350ee89f2c1604299660525b248"
 uuid = "34da2185-b29b-5c13-b0c7-acf172513d20"
-version = "4.14.0"
+version = "4.15.0"
 weakdeps = ["Dates", "LinearAlgebra"]
 
     [deps.Compat.extensions]
@@ -879,9 +483,9 @@ weakdeps = ["IntervalSets", "StaticArrays"]
     ConstructionBaseStaticArraysExt = "StaticArrays"
 
 [[deps.Contour]]
-git-tree-sha1 = "d05d9e7b7aedff4e5b51a029dced05cfb6125781"
+git-tree-sha1 = "439e35b0b36e2e5881738abc8857bd92ad6ff9a8"
 uuid = "d38c429a-6771-53c6-b99e-75d170b6e991"
-version = "0.6.2"
+version = "0.6.3"
 
 [[deps.DataAPI]]
 git-tree-sha1 = "abe83f3a2f1b857aac70ef8b269080af17764bbe"
@@ -890,9 +494,9 @@ version = "1.16.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
-git-tree-sha1 = "0f4b5d62a88d8f59003e43c25a8a90de9eb76317"
+git-tree-sha1 = "1d0a14036acb104d9e89698bd408f63ab58cdc82"
 uuid = "864edb3b-99cc-5e75-8d2d-829cb0a9cfe8"
-version = "0.18.18"
+version = "0.18.20"
 
 [[deps.Dates]]
 deps = ["Printf"]
@@ -906,9 +510,9 @@ version = "1.9.1"
 
 [[deps.Dictionaries]]
 deps = ["Indexing", "Random", "Serialization"]
-git-tree-sha1 = "573c92ef22ee0783bfaa4007c732b044c791bc6d"
+git-tree-sha1 = "35b66b6744b2d92c778afd3a88d2571875664a2a"
 uuid = "85a47980-9c8c-11e8-2b9f-f7ca1fa99fb4"
-version = "0.4.1"
+version = "0.4.2"
 
 [[deps.DiffResults]]
 deps = ["StaticArraysCore"]
@@ -951,9 +555,9 @@ version = "0.1.10"
 
 [[deps.Expat_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "4558ab818dcceaab612d1bb8c19cee87eda2b83c"
+git-tree-sha1 = "1c6317308b9dc757616f0b5cb379db10494443a7"
 uuid = "2e619515-83b5-522b-bb60-26c02a35a201"
-version = "2.5.0+0"
+version = "2.6.2+0"
 
 [[deps.FFMPEG]]
 deps = ["FFMPEG_jll"]
@@ -972,15 +576,15 @@ uuid = "7b1f6079-737a-58dc-b8bc-7a2ca5c1b5ee"
 
 [[deps.FixedPointNumbers]]
 deps = ["Statistics"]
-git-tree-sha1 = "335bfdceacc84c5cdf16aadc768aa5ddfc5383cc"
+git-tree-sha1 = "05882d6995ae5c12bb5f36dd2ed3f61c98cbb172"
 uuid = "53c48c17-4a7d-5ca2-90c5-79b7896eea93"
-version = "0.8.4"
+version = "0.8.5"
 
 [[deps.Fontconfig_jll]]
-deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "FreeType2_jll", "JLLWrappers", "Libdl", "Libuuid_jll", "Pkg", "Zlib_jll"]
-git-tree-sha1 = "21efd19106a55620a188615da6d3d06cd7f6ee03"
+deps = ["Artifacts", "Bzip2_jll", "Expat_jll", "FreeType2_jll", "JLLWrappers", "Libdl", "Libuuid_jll", "Zlib_jll"]
+git-tree-sha1 = "db16beca600632c95fc8aca29890d83788dd8b23"
 uuid = "a3f928ae-7b40-5064-980b-68af3947d34b"
-version = "2.13.93+0"
+version = "2.13.96+0"
 
 [[deps.Format]]
 git-tree-sha1 = "9c68794ef81b08086aeb32eeaf33531668d5f5fc"
@@ -1004,10 +608,14 @@ uuid = "d7e528f0-a631-5988-bf34-fe36492bcfd7"
 version = "2.13.1+0"
 
 [[deps.FriBidi_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "aa31987c2ba8704e23c6c8ba8a4f769d5d7e4f91"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "1ed150b39aebcc805c26b93a8d0122c940f64ce2"
 uuid = "559328eb-81f9-559d-9380-de523a88c83c"
-version = "1.0.10+0"
+version = "1.0.14+0"
+
+[[deps.Future]]
+deps = ["Random"]
+uuid = "9fa8497b-333b-5362-9e8d-4d0656e87820"
 
 [[deps.GLFW_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Libglvnd_jll", "Xorg_libXcursor_jll", "Xorg_libXi_jll", "Xorg_libXinerama_jll", "Xorg_libXrandr_jll"]
@@ -1016,16 +624,16 @@ uuid = "0656b61e-2033-5cc2-a64a-77c0f6c09b89"
 version = "3.3.9+0"
 
 [[deps.GR]]
-deps = ["Artifacts", "Base64", "DelimitedFiles", "Downloads", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Pkg", "Preferences", "Printf", "Random", "Serialization", "Sockets", "TOML", "Tar", "Test", "UUIDs", "p7zip_jll"]
-git-tree-sha1 = "27442171f28c952804dede8ff72828a96f2bfc1f"
+deps = ["Artifacts", "Base64", "DelimitedFiles", "Downloads", "GR_jll", "HTTP", "JSON", "Libdl", "LinearAlgebra", "Preferences", "Printf", "Random", "Serialization", "Sockets", "TOML", "Tar", "Test", "p7zip_jll"]
+git-tree-sha1 = "ddda044ca260ee324c5fc07edb6d7cf3f0b9c350"
 uuid = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-version = "0.72.10"
+version = "0.73.5"
 
 [[deps.GR_jll]]
 deps = ["Artifacts", "Bzip2_jll", "Cairo_jll", "FFMPEG_jll", "Fontconfig_jll", "FreeType2_jll", "GLFW_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pixman_jll", "Qt6Base_jll", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "025d171a2847f616becc0f84c8dc62fe18f0f6dd"
+git-tree-sha1 = "278e5e0f820178e8a26df3184fcb2280717c79b1"
 uuid = "d2c73de3-f751-5644-a686-071e5b155ba9"
-version = "0.72.10+0"
+version = "0.73.5+0"
 
 [[deps.Gettext_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "Libdl", "Libiconv_jll", "Pkg", "XML2_jll"]
@@ -1035,9 +643,9 @@ version = "0.21.0+0"
 
 [[deps.Glib_jll]]
 deps = ["Artifacts", "Gettext_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Libiconv_jll", "Libmount_jll", "PCRE2_jll", "Zlib_jll"]
-git-tree-sha1 = "359a1ba2e320790ddbe4ee8b4d54a305c0ea2aff"
+git-tree-sha1 = "7c82e6a6cd34e9d935e9aa4051b66c6ff3af59ba"
 uuid = "7746bdde-850d-59dc-9ae8-88ece973131d"
-version = "2.80.0+0"
+version = "2.80.2+0"
 
 [[deps.Graphite2_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1058,9 +666,9 @@ version = "1.6.0"
 
 [[deps.HTTP]]
 deps = ["Base64", "CodecZlib", "ConcurrentUtilities", "Dates", "ExceptionUnwrapping", "Logging", "LoggingExtras", "MbedTLS", "NetworkOptions", "OpenSSL", "Random", "SimpleBufferStream", "Sockets", "URIs", "UUIDs"]
-git-tree-sha1 = "8e59b47b9dc525b70550ca082ce85bcd7f5477cd"
+git-tree-sha1 = "d1d712be3164d61d1fb98e7ce9bcbc6cc06b45ed"
 uuid = "cd3eb016-35fb-5094-929b-558a96fad6f3"
-version = "1.10.5"
+version = "1.10.8"
 
 [[deps.HarfBuzz_jll]]
 deps = ["Artifacts", "Cairo_jll", "Fontconfig_jll", "FreeType2_jll", "Glib_jll", "Graphite2_jll", "JLLWrappers", "Libdl", "Libffi_jll", "Pkg"]
@@ -1108,9 +716,9 @@ weakdeps = ["Random", "RecipesBase", "Statistics"]
 
 [[deps.InverseFunctions]]
 deps = ["Test"]
-git-tree-sha1 = "896385798a8d49a255c398bd49162062e4a4c435"
+git-tree-sha1 = "e7cbed5032c4c397a6ac23d1493f3289e01231c4"
 uuid = "3587e190-3f89-42d0-90ee-14403ec27112"
-version = "0.1.13"
+version = "0.1.14"
 weakdeps = ["Dates"]
 
     [deps.InverseFunctions.extensions]
@@ -1141,9 +749,9 @@ version = "0.21.4"
 
 [[deps.JpegTurbo_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "3336abae9a713d2210bb57ab484b1e065edd7d23"
+git-tree-sha1 = "c84a835e1a09b289ffcd2271bf2a337bbdda6637"
 uuid = "aacddb02-875f-59d6-b918-886e6ef4fbf8"
-version = "3.0.2+0"
+version = "3.0.3+0"
 
 [[deps.JuliaInterpreter]]
 deps = ["CodeTracking", "InteractiveUtils", "Random", "UUIDs"]
@@ -1152,10 +760,10 @@ uuid = "aa1ae85d-cabe-5617-a682-6adf51b2e16a"
 version = "0.9.31"
 
 [[deps.LAME_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "f6250b16881adf048549549fba48b1161acdac8c"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "170b660facf5df5de098d866564877e119141cbd"
 uuid = "c1c5ebd0-6772-5130-a774-d5fcae4a789d"
-version = "3.100.1+0"
+version = "3.100.2+0"
 
 [[deps.LERC_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
@@ -1170,10 +778,10 @@ uuid = "1d63c593-3942-5779-bab2-d838dc0a180e"
 version = "15.0.7+0"
 
 [[deps.LZO_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "e5b909bcf985c5e2605737d2ce278ed791b89be6"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "70c5da094887fd2cae843b8db33920bac4b6f07d"
 uuid = "dd4b983a-f0e5-5f8d-a1b7-129d4a5fb1ac"
-version = "2.10.1+0"
+version = "2.10.2+0"
 
 [[deps.LaTeXStrings]]
 git-tree-sha1 = "50901ebc375ed41dbf8058da26f9de442febbbec"
@@ -1182,9 +790,9 @@ version = "1.3.1"
 
 [[deps.Latexify]]
 deps = ["Format", "InteractiveUtils", "LaTeXStrings", "MacroTools", "Markdown", "OrderedCollections", "Requires"]
-git-tree-sha1 = "cad560042a7cc108f5a4c24ea1431a9221f22c1b"
+git-tree-sha1 = "e0b5cd21dc1b44ec6e64f351976f961e6f31d6c4"
 uuid = "23fbe1c1-3f47-55db-b15f-69d7ec21a316"
-version = "0.16.2"
+version = "0.16.3"
 
     [deps.Latexify.extensions]
     DataFramesExt = "DataFrames"
@@ -1228,10 +836,10 @@ uuid = "e9f186c6-92d2-5b65-8a66-fee21dc1b490"
 version = "3.2.2+1"
 
 [[deps.Libgcrypt_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgpg_error_jll", "Pkg"]
-git-tree-sha1 = "64613c82a59c120435c067c2b809fc61cf5166ae"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Libgpg_error_jll"]
+git-tree-sha1 = "9fd170c4bbfd8b935fdc5f8b7aa33532c991a673"
 uuid = "d4300ac3-e22c-5743-9152-c294e39db1e4"
-version = "1.8.7+0"
+version = "1.8.11+0"
 
 [[deps.Libglvnd_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Xorg_libX11_jll", "Xorg_libXext_jll"]
@@ -1240,10 +848,10 @@ uuid = "7e76a0d4-f3c7-5321-8279-8d96eeed0f29"
 version = "1.6.0+0"
 
 [[deps.Libgpg_error_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "c333716e46366857753e273ce6a69ee0945a6db9"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "fbb1f2bef882392312feb1ede3615ddc1e9b99ed"
 uuid = "7add5ba3-2f88-524e-9cd5-f83b8a55f7b8"
-version = "1.42.0+0"
+version = "1.49.0+0"
 
 [[deps.Libiconv_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1253,9 +861,9 @@ version = "1.17.0+0"
 
 [[deps.Libmount_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "dae976433497a2f841baadea93d27e68f1a12a97"
+git-tree-sha1 = "0c4f9c4f1a50d8f35048fa0532dabbadf702f81e"
 uuid = "4b2f31a3-9ecc-558c-b454-b3730dcb73e9"
-version = "2.39.3+0"
+version = "2.40.1+0"
 
 [[deps.Libtiff_jll]]
 deps = ["Artifacts", "JLLWrappers", "JpegTurbo_jll", "LERC_jll", "Libdl", "XZ_jll", "Zlib_jll", "Zstd_jll"]
@@ -1265,9 +873,9 @@ version = "4.5.1+1"
 
 [[deps.Libuuid_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
-git-tree-sha1 = "0a04a1318df1bf510beb2562cf90fb0c386f58c4"
+git-tree-sha1 = "5ee6203157c120d79034c748a2acba45b82b8807"
 uuid = "38a345b3-de98-5d2b-a5d3-14cd9215e700"
-version = "2.39.3+1"
+version = "2.40.1+0"
 
 [[deps.LinearAlgebra]]
 deps = ["Libdl", "OpenBLAS_jll", "libblastrampoline_jll"]
@@ -1337,9 +945,9 @@ version = "0.3.2"
 
 [[deps.Missings]]
 deps = ["DataAPI"]
-git-tree-sha1 = "f66bdc5de519e8f8ae43bdc598782d35a25b1272"
+git-tree-sha1 = "ec4f7fbeab05d7747bdf98eb74d130a2a2ed298d"
 uuid = "e1d29d7a-bbdc-5cf2-9ac0-f12de2c33e28"
-version = "1.1.0"
+version = "1.2.0"
 
 [[deps.Mmap]]
 uuid = "a63ad114-7e13-5084-954f-fe012c677804"
@@ -1376,9 +984,9 @@ version = "0.8.1+2"
 
 [[deps.OpenSSL]]
 deps = ["BitFlags", "Dates", "MozillaCACerts_jll", "OpenSSL_jll", "Sockets"]
-git-tree-sha1 = "af81a32750ebc831ee28bdaaba6e1067decef51e"
+git-tree-sha1 = "38cb508d080d21dc1128f7fb04f20387ed4c0af4"
 uuid = "4d8831e6-92b7-49fb-bdf8-b643e874388c"
-version = "1.4.2"
+version = "1.4.3"
 
 [[deps.OpenSSL_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1427,9 +1035,9 @@ version = "1.3.0"
 
 [[deps.Pixman_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "JLLWrappers", "LLVMOpenMP_jll", "Libdl"]
-git-tree-sha1 = "64779bc4c9784fee475689a1752ef4d5747c5e87"
+git-tree-sha1 = "35621f10a7531bc8fa58f74610b1bfb70a3cfc6b"
 uuid = "30392449-352a-5448-841d-b1acce4e97dc"
-version = "0.42.2+0"
+version = "0.43.4+0"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "FileWatching", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1449,10 +1057,10 @@ uuid = "995b91a9-d308-5afd-9ec6-746e21dbc043"
 version = "1.4.1"
 
 [[deps.Plots]]
-deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Preferences", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
-git-tree-sha1 = "ccee59c6e48e6f2edf8a5b64dc817b6729f99eb5"
+deps = ["Base64", "Contour", "Dates", "Downloads", "FFMPEG", "FixedPointNumbers", "GR", "JLFzf", "JSON", "LaTeXStrings", "Latexify", "LinearAlgebra", "Measures", "NaNMath", "Pkg", "PlotThemes", "PlotUtils", "PrecompileTools", "Printf", "REPL", "Random", "RecipesBase", "RecipesPipeline", "Reexport", "RelocatableFolders", "Requires", "Scratch", "Showoff", "SparseArrays", "Statistics", "StatsBase", "UUIDs", "UnicodeFun", "UnitfulLatexify", "Unzip"]
+git-tree-sha1 = "442e1e7ac27dd5ff8825c3fa62fbd1e86397974b"
 uuid = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
-version = "1.39.0"
+version = "1.40.4"
 
     [deps.Plots.extensions]
     FileIOExt = "FileIO"
@@ -1482,15 +1090,15 @@ version = "0.1.6"
 
 [[deps.PlutoTeachingTools]]
 deps = ["Downloads", "HypertextLiteral", "LaTeXStrings", "Latexify", "Markdown", "PlutoLinks", "PlutoUI", "Random"]
-git-tree-sha1 = "89f57f710cc121a7f32473791af3d6beefc59051"
+git-tree-sha1 = "5d9ab1a4faf25a62bb9d07ef0003396ac258ef1c"
 uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
-version = "0.2.14"
+version = "0.2.15"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
-git-tree-sha1 = "71a22244e352aa8c5f0f2adde4150f62368a3f2e"
+git-tree-sha1 = "ab55ee1510ad2af0ff674dbcced5e94921f867a9"
 uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
-version = "0.7.58"
+version = "0.7.59"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -1594,6 +1202,12 @@ version = "1.2.1"
 [[deps.Serialization]]
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
+[[deps.Setfield]]
+deps = ["ConstructionBase", "Future", "MacroTools", "StaticArraysCore"]
+git-tree-sha1 = "e2cc6d8c88613c05e1defb55170bf5ff211fbeac"
+uuid = "efcf1570-3423-57d1-acb7-fd33fddbac46"
+version = "1.1.1"
+
 [[deps.Showoff]]
 deps = ["Dates", "Grisu"]
 git-tree-sha1 = "91eddf657aca81df9ae6ceb20b959ae5653ad1de"
@@ -1621,9 +1235,9 @@ version = "1.10.0"
 
 [[deps.SpecialFunctions]]
 deps = ["IrrationalConstants", "LogExpFunctions", "OpenLibm_jll", "OpenSpecFun_jll"]
-git-tree-sha1 = "e2cfc4012a19088254b3950b85c3c1d8882d864d"
+git-tree-sha1 = "2f5d4697f21388cbe1ff299430dd169ef97d7e14"
 uuid = "276daf66-3868-5448-9aa4-cd146d93841b"
-version = "2.3.1"
+version = "2.4.0"
 weakdeps = ["ChainRulesCore"]
 
     [deps.SpecialFunctions.extensions]
@@ -1664,9 +1278,9 @@ version = "1.7.0"
 
 [[deps.StatsBase]]
 deps = ["DataAPI", "DataStructures", "LinearAlgebra", "LogExpFunctions", "Missings", "Printf", "Random", "SortingAlgorithms", "SparseArrays", "Statistics", "StatsAPI"]
-git-tree-sha1 = "1d77abd07f617c4868c33d4f5b9e1dbb2643c9cf"
+git-tree-sha1 = "5cf7606d6cef84b543b483848d4ae08ad9832b21"
 uuid = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-version = "0.34.2"
+version = "0.34.3"
 
 [[deps.SuiteSparse_jll]]
 deps = ["Artifacts", "Libdl", "libblastrampoline_jll"]
@@ -1694,9 +1308,9 @@ deps = ["InteractiveUtils", "Logging", "Random", "Serialization"]
 uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TranscodingStreams]]
-git-tree-sha1 = "71509f04d045ec714c4748c785a59045c3736349"
+git-tree-sha1 = "5d54d076465da49d6746c647022f3b3674e64156"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
-version = "0.10.7"
+version = "0.10.8"
 weakdeps = ["Random", "Test"]
 
     [deps.TranscodingStreams.extensions]
@@ -1732,9 +1346,9 @@ version = "0.4.1"
 
 [[deps.Unitful]]
 deps = ["Dates", "LinearAlgebra", "Random"]
-git-tree-sha1 = "3c793be6df9dd77a0cf49d80984ef9ff996948fa"
+git-tree-sha1 = "352edac1ad17e018186881b051960bfca78a075a"
 uuid = "1986cc42-f94f-5a68-af5c-568840ba703d"
-version = "1.19.0"
+version = "1.19.1"
 weakdeps = ["ConstructionBase", "InverseFunctions"]
 
     [deps.Unitful.extensions]
@@ -1789,16 +1403,16 @@ uuid = "ffd25f8a-64ca-5728-b0f7-c24cf3aae800"
 version = "5.4.6+0"
 
 [[deps.Xorg_libICE_jll]]
-deps = ["Libdl", "Pkg"]
-git-tree-sha1 = "e5becd4411063bdcac16be8b66fc2f9f6f1e8fe5"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "326b4fea307b0b39892b3e85fa451692eda8d46c"
 uuid = "f67eecfb-183a-506d-b269-f58e52b52d7c"
-version = "1.0.10+1"
+version = "1.1.1+0"
 
 [[deps.Xorg_libSM_jll]]
-deps = ["Libdl", "Pkg", "Xorg_libICE_jll"]
-git-tree-sha1 = "4a9d9e4c180e1e8119b5ffc224a7b59d3a7f7e18"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libICE_jll"]
+git-tree-sha1 = "3796722887072218eabafb494a13c963209754ce"
 uuid = "c834827a-8449-5923-a945-d239c165b7dd"
-version = "1.2.3+0"
+version = "1.2.4+0"
 
 [[deps.Xorg_libX11_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libxcb_jll", "Xorg_xtrans_jll"]
@@ -1825,10 +1439,10 @@ uuid = "a3789734-cfe1-5b06-b2d0-1dd0d9d62d05"
 version = "1.1.4+0"
 
 [[deps.Xorg_libXext_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Xorg_libX11_jll"]
-git-tree-sha1 = "b7c0aa8c376b31e4852b360222848637f481f8c3"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
+git-tree-sha1 = "d2d1a5c49fae4ba39983f63de6afcbea47194e85"
 uuid = "1082639a-0dae-5f34-9b06-72781eeb8cb3"
-version = "1.3.4+4"
+version = "1.3.6+0"
 
 [[deps.Xorg_libXfixes_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Xorg_libX11_jll"]
@@ -1855,10 +1469,10 @@ uuid = "ec84b674-ba8e-5d96-8ba1-2a689ba10484"
 version = "1.5.2+4"
 
 [[deps.Xorg_libXrender_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg", "Xorg_libX11_jll"]
-git-tree-sha1 = "19560f30fd49f4d4efbe7002a1037f8c43d43b96"
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Xorg_libX11_jll"]
+git-tree-sha1 = "47e45cd78224c53109495b3e324df0c37bb61fbe"
 uuid = "ea2f1a96-1ddc-540d-b46f-429655e07cfa"
-version = "0.9.10+4"
+version = "0.9.11+0"
 
 [[deps.Xorg_libpthread_stubs_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl"]
@@ -1962,10 +1576,10 @@ uuid = "1a1c6b14-54f6-533d-8383-74cd7377aa70"
 version = "3.1.1+0"
 
 [[deps.libaom_jll]]
-deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
-git-tree-sha1 = "3a2ea60308f0996d26f1e5354e10c24e9ef905d4"
+deps = ["Artifacts", "JLLWrappers", "Libdl"]
+git-tree-sha1 = "1827acba325fdcdf1d2647fc8d5301dd9ba43a9d"
 uuid = "a4ae2306-e953-59d6-aa16-d00cac43593b"
-version = "3.4.0+0"
+version = "3.9.0+0"
 
 [[deps.libass_jll]]
 deps = ["Artifacts", "Bzip2_jll", "FreeType2_jll", "FriBidi_jll", "HarfBuzz_jll", "JLLWrappers", "Libdl", "Pkg", "Zlib_jll"]
@@ -2044,69 +1658,31 @@ version = "1.4.1+1"
 """
 
 # ╔═╡ Cell order:
-# ╟─9ade0bbc-0b04-4e6d-92cf-54062b638cfe
-# ╟─437d3bf9-cf44-40a8-97bc-8aee4b62d069
-# ╟─e8ba4b4e-2d21-4bfe-bf32-02969f9b2970
-# ╠═cb9fdca3-db42-4501-a2fe-c3ff099b2d83
-# ╟─a4750e66-b448-479e-a5dd-b9aec0f3a857
-# ╟─c2a0a8bc-c1e6-4a48-91dc-590ca79383ff
-# ╟─798f53e9-d871-42d1-a81c-d35adc7ece21
-# ╟─1215bc85-4760-473b-93d0-5d6a8952e27e
-# ╟─7b717c8f-1fb8-4892-a250-c77e5e088445
-# ╟─1273bd41-9986-4b9f-9e06-b3bed7ab65f0
-# ╟─6d5acd0c-dbcf-4d0a-a94c-76ac59006fc8
-# ╟─fe35af83-4910-48e4-b9de-5b8a1f85fb72
-# ╟─3fde6651-a704-4757-b282-3a7cfcd36f6e
-# ╟─0ff7e560-37ca-4016-bc01-741322402679
-# ╟─3e76dfec-e83c-46df-8838-b299a7aaa5e3
-# ╟─59ceb096-1cc0-4c69-b56f-476710dd698e
-# ╟─1410b82a-0017-4ef3-adf8-1f4da66393a4
-# ╟─ad74e82b-b2f4-4b8d-99ea-2fe295bb018d
-# ╟─ce2c280e-6a55-4766-a0f9-941b448c41c9
-# ╟─cf9bf7ac-905f-4112-a7f4-36c536d33918
-# ╟─87fc0818-273b-4d0b-814a-058365ee07a0
-# ╟─915f987d-9bb5-4e0b-9cf0-f52e3937695a
-# ╟─2486eb34-a858-4ea9-99e1-f17627589461
-# ╠═a6fd628c-86db-4d3f-836b-ff376cac7f1d
-# ╟─1663348b-ed67-4851-9365-9641e6379fcd
-# ╟─74e06991-79a2-4711-8bc7-c8656249641f
-# ╟─c7e615fa-62aa-4de2-8ef4-2df8534b2c06
-# ╟─a223cbff-88b0-4a28-af53-c139e7b9108a
-# ╟─9d9a89ed-76f3-4e76-a3cc-0d33c747fbb5
-# ╟─729c86ab-cf81-48bf-82be-b89cf28eaee6
-# ╟─fbfc0e6c-775e-4025-ad06-e3f6e291ec52
-# ╟─0f2ade1e-6958-4ebd-942a-c844bf3dbb99
-# ╟─a7a68629-bf6f-435e-9a97-de9a02a31160
-# ╟─a1558b96-576f-4661-b357-c9f036c0167d
-# ╟─fff6f9f5-b002-46ea-b6ff-1ecf32357ea9
-# ╟─8b53b1cc-520b-48e4-b2b1-6ad6ebe443e2
-# ╟─1e7ebcaf-dd83-40fb-9bd8-2e48a1911bfa
-# ╟─0e899f67-adec-4837-9993-c9fe22f788d1
-# ╟─27f0ae17-b61c-49c5-b4fc-6de5d2ddda94
-# ╠═babfbc1f-7beb-44d1-b3c8-75309e8b817c
-# ╟─8b92df7f-d97b-43fa-8ac3-fed8ee974f5f
-# ╟─7b4fa73c-1075-4271-8d2f-1668d98904ab
-# ╟─edef417d-b0e4-4cad-bf63-462a8d7e861f
-# ╟─53ad2e4e-0268-4488-9891-815922d8a8db
-# ╟─8556c8f4-89e4-4544-ad73-4da8b43a7051
-# ╟─e9c0d423-793d-4997-a0fd-5c67b41fffb2
-# ╟─91db142a-109f-414a-8d2c-9d3cd92bae40
-# ╟─12a615bb-97b8-4fde-bd66-ac7083970e0e
-# ╟─f9dad52e-d6a2-46c4-a5b3-91a50c9425c1
-# ╟─ff61d6e1-5681-4d15-8164-62baee4613ba
-# ╟─b90a1c10-8e57-4b2a-b48a-ccb78010a4f5
-# ╟─cf9733b3-bdc9-4e58-a7f3-87845eb907da
-# ╟─3019d77e-a41e-4fa5-a0bf-b91d3d72e96f
-# ╠═2a5d2458-9958-4c9b-a183-d7029b6360c9
-# ╠═25758574-5da4-4fbe-946d-d55f6210b7e2
-# ╠═ae68a0e2-46ce-4186-97b3-4b03b5f2d8ce
-# ╠═0360447c-c6c7-4ba6-8e5f-a20d5797995b
-# ╠═1072afe6-bad7-4de3-9ad2-6dcef2b924bb
-# ╠═ebf8b842-99ce-40e8-9bf4-931471879bf9
-# ╠═9a2e8210-c140-4689-bb16-2aab3c3b2aaa
-# ╠═fb45f5a8-15c4-4695-b36b-f21aab1e3d80
-# ╟─474e5d19-b537-42d2-9e92-2a26996cee2d
-# ╠═35b9a451-5fac-46e2-97bb-ebc19d4b3418
-# ╠═2aef1bd5-7a81-417b-a090-77644fc5f640
+# ╠═48ef77e4-ad88-49b6-83ab-06e949186782
+# ╠═fe359958-cafc-4916-9d34-013dc955746a
+# ╠═c9520a96-5001-4e1a-9b33-b370030e66dd
+# ╟─9ca96d9a-f4ff-40bf-833f-995f8f39e271
+# ╠═b155df67-f198-41db-b7a3-d361a66feb07
+# ╠═49974f75-2d9a-4300-912b-9928b51816a7
+# ╠═e73cd265-119f-40a5-89d0-b22c755977e8
+# ╠═f793c9ea-aa2b-4184-a228-bc5562fe4242
+# ╟─a9a2a6a2-2b0c-4dcf-b4a1-2c35ca98b631
+# ╠═194a54b3-ea8f-4704-a2fe-6a6947f453da
+# ╟─4f80b018-f810-11ee-141e-1be227dfce41
+# ╠═b38b74b5-04f0-4497-b66d-d47219fcbf2e
+# ╠═a6bd3b5d-bf41-4509-b031-886a2ada960a
+# ╟─7bc54d35-57db-440c-a7d1-5c259a4f33be
+# ╠═57674d38-b2b3-4586-a94b-28f61b711e10
+# ╟─33089a05-217f-4f03-873c-2846cf9db2c9
+# ╠═ab4537ae-b700-4c1e-9bd6-de053b49edbe
+# ╠═4d31c24a-b9ec-4dbe-8fdc-22c62d8ec3b6
+# ╟─50635ca3-242f-44f5-9cb2-3993da1fa835
+# ╟─bc99b07e-0342-4206-acc5-5a71330a80eb
+# ╠═c98d1106-3a79-4377-922b-8b73956be2ab
+# ╟─c9d89e6e-649b-4d6a-9bcd-3838c2a11e23
+# ╠═c8391608-efe9-48a5-8cdb-f58bcc37b63b
+# ╟─91daa86b-6b44-4824-84f7-f874fa819391
+# ╠═6f819dd6-1a62-430a-bd6d-5544cd1fc016
+# ╠═4d2dc03e-3b0f-4cdd-82fe-64a5e89b6c91
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

@@ -25,6 +25,7 @@ Supplementary materials, including lecture notes and presentations, can be found
 1.
 2. **Second talk**: {download}`Analytic continuation within K-matrix formalism <../additional_materials/Analytic_continuation_ComPWA.pdf>` (Lena Zeynep Pöpping)
 3.
+4. [$K$-matrix parametrizations for $\pi\pi$ scattering](./_static/pipiS-Kmatrix.html)
 
 :::{toctree}
 :hidden:
@@ -32,6 +33,13 @@ Supplementary materials, including lecture notes and presentations, can be found
 K matrix with Julia <https://rub-ep1.github.io/international-k-matrix-day/_static/K-matrix.html>
 analyticity-1channel
 analyticity-2channel
+:::
+
+:::{toctree}
+:caption: Bonus material
+:hidden:
+:maxdepth: 1
+ππ S-wave parametrization <https://rub-ep1.github.io/international-k-matrix-day/_static/pipiS-Kmatrix.html>
 :::
 
 ## Installation Instructions

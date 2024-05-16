@@ -51,7 +51,7 @@ sphinx-autobuild \
 
 [tasks.doc-julia]
 cmd = """
-julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_notebook("K-matrix.jl")'
+julia --project=.. -e 'using PlutoSliderServer; PlutoSliderServer.export_directory()'
 """
 cwd = "docs"
 depends_on = [
