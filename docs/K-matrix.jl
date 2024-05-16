@@ -31,6 +31,8 @@ end
 md"""
 # Practical K-Matrix Applications
 
+## Introduction
+
 This educational material introduces the K-matrix formalism, focusing on its practical application in describing scattering amplitude observables. The K-matrix approach provides a robust framework for analyzing scattering processes, essential for understanding resonance phenomena in hadron physics. One of the main challenges in employing this formalism lies in the initial estimation of the bare parameters, which requires a thorough comprehension of the underlying principles and mechanics of the model.
 
 On the figure below one can find illustration of the ab->cd scattering process with resonance which has mass $m_{0}$ and width $Г_{0}$. This process can be described with K-matrix:
@@ -100,14 +102,14 @@ and $\rho=\text{Diag}(\rho_1,\rho_2,\rho_3)$
 """
 
 # ╔═╡ 1215bc85-4760-473b-93d0-5d6a8952e27e
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E1.Q1:** When $K$ is degenerate and has rank 1, the expression for T is simple. Figure it out for 3x3 matrix.
 
 **Advanced option:** Can you prove it for general case?
-""")
+"""]))
 
 # ╔═╡ 7b717c8f-1fb8-4892-a250-c77e5e088445
-aside(tip(md"$T = [1-iK\rho]^{-1}K$"))
+aside(Markdown.MD(Markdown.Admonition("warning", "Tip", [md"$T = [1-iK\rho]^{-1}K$"])))
 
 # ╔═╡ 1273bd41-9986-4b9f-9e06-b3bed7ab65f0
 answer_box(
@@ -119,7 +121,7 @@ This is expression known as the [Flatte formula](https://inspirehep.net/literatu
 # ╔═╡ 6d5acd0c-dbcf-4d0a-a94c-76ac59006fc8
 md"""
 
-## Comparison to Breit-Wigner
+### Comparison to Breit-Wigner
 
 Let's compare to the BW parametrization
 
@@ -149,9 +151,9 @@ Let's setup couplings for three channels, that we can adjust:
 """
 
 # ╔═╡ 59ceb096-1cc0-4c69-b56f-476710dd698e
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E1.Q2:** Which parameter is needed to be changed in order to see difference between BW and K-matrix formalism?
-""")
+"""]))
 
 # ╔═╡ 1410b82a-0017-4ef3-adf8-1f4da66393a4
 answer_box(
@@ -173,9 +175,9 @@ Hence
 """
 
 # ╔═╡ cf9bf7ac-905f-4112-a7f4-36c536d33918
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E1.Q3:** Let's assume that we know cross-section distribution and can measure FWHM of it. How is it possible to estimate K-matrix parameters $g_{i}$?
-""")
+"""]))
 
 # ╔═╡ 87fc0818-273b-4d0b-814a-058365ee07a0
 answer_box(
@@ -216,7 +218,7 @@ md"""
 """
 
 # ╔═╡ c7e615fa-62aa-4de2-8ef4-2df8534b2c06
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E2.Q1:** Let's start with setting off-diagonal parameters described coupling to zeros $g_{2}=h_{1}=0$. Then K-matrix would be What would be 
 
 $K =
@@ -226,10 +228,10 @@ $K =
 \end{pmatrix}$
 
 How will the T-matrix look like?
-""")
+"""]))
 
 # ╔═╡ a223cbff-88b0-4a28-af53-c139e7b9108a
-tip(md"For single resonance:
+Markdown.MD(Markdown.Admonition("warning", "Tip", [md"For single resonance:
 
 $T =
 \frac{1}{m_{(1)}^2-s-ig_1^2\rho_1-ig_2^2\rho_2}
@@ -238,7 +240,7 @@ g_1^2 & g_1g_2\\
 g_2g_1 & g_2^2
 \end{pmatrix}$
 
-")
+"]))
 
 # ╔═╡ 9d9a89ed-76f3-4e76-a3cc-0d33c747fbb5
 answer_box(md"""
@@ -266,7 +268,7 @@ md"""
 """
 
 # ╔═╡ a7a68629-bf6f-435e-9a97-de9a02a31160
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E2.Q2:** Let's find the first expansion term to reflect on how a weakly coupled resonances show up in the second channel. For that put $g_2=\epsilon$, $h_1 = 0$.
 
 Then,
@@ -283,7 +285,7 @@ g_1^2 & g_1 \epsilon\\
 \end{pmatrix}$
 
 In this case the T-matrix will become:
-""")
+"""]))
 
 # ╔═╡ a1558b96-576f-4661-b357-c9f036c0167d
 answer_box(md"""
@@ -313,12 +315,12 @@ md"""
 """
 
 # ╔═╡ 8b53b1cc-520b-48e4-b2b1-6ad6ebe443e2
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E2.Q3:** Let's , finally, put $g_2=h_1=\epsilon$.
 
 What will we see for the off-diagonal terms of T-matrix?
 
-""")
+"""]))
 
 # ╔═╡ 1e7ebcaf-dd83-40fb-9bd8-2e48a1911bfa
 answer_box(md"""
@@ -352,12 +354,12 @@ If K is zero for $s=s_\text{z}$, T is zero.
 """
 
 # ╔═╡ edef417d-b0e4-4cad-bf63-462a8d7e861f
-question_box(md"""
-**E3.Q1:** Why does it have 0?
-""")
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
+**E3.Q1:** Why does it have zero between the poles?
+"""]))
 
 # ╔═╡ 53ad2e4e-0268-4488-9891-815922d8a8db
-aside(tip(md"For explanation let's have a look at K-matrix in these case."))
+aside(Markdown.MD(Markdown.Admonition("warning", "Tip", [md"For explanation let's have a look at K-matrix in these case."])))
 
 # ╔═╡ 91db142a-109f-414a-8d2c-9d3cd92bae40
 md"""
@@ -386,10 +388,10 @@ Production couplings
 """
 
 # ╔═╡ cf9733b3-bdc9-4e58-a7f3-87845eb907da
-question_box(md"""
+Markdown.MD(Markdown.Admonition("danger", "Question", [md"""
 **E3.Q2:** What can the complexity of a production factor lead to? 
 How the plot above will change?
-""")
+"""]))
 
 # ╔═╡ 3019d77e-a41e-4fa5-a0bf-b91d3d72e96f
 md"""
@@ -2055,7 +2057,7 @@ version = "1.4.1+1"
 # ╟─6d5acd0c-dbcf-4d0a-a94c-76ac59006fc8
 # ╟─fe35af83-4910-48e4-b9de-5b8a1f85fb72
 # ╟─3fde6651-a704-4757-b282-3a7cfcd36f6e
-# ╠═0ff7e560-37ca-4016-bc01-741322402679
+# ╟─0ff7e560-37ca-4016-bc01-741322402679
 # ╟─3e76dfec-e83c-46df-8838-b299a7aaa5e3
 # ╟─59ceb096-1cc0-4c69-b56f-476710dd698e
 # ╟─1410b82a-0017-4ef3-adf8-1f4da66393a4
@@ -2082,7 +2084,7 @@ version = "1.4.1+1"
 # ╟─0e899f67-adec-4837-9993-c9fe22f788d1
 # ╟─27f0ae17-b61c-49c5-b4fc-6de5d2ddda94
 # ╠═babfbc1f-7beb-44d1-b3c8-75309e8b817c
-# ╠═8b92df7f-d97b-43fa-8ac3-fed8ee974f5f
+# ╟─8b92df7f-d97b-43fa-8ac3-fed8ee974f5f
 # ╟─7b4fa73c-1075-4271-8d2f-1668d98904ab
 # ╟─edef417d-b0e4-4cad-bf63-462a8d7e861f
 # ╟─53ad2e4e-0268-4488-9891-815922d8a8db
